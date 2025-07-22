@@ -467,6 +467,16 @@ public class IPDBillHistory extends JDialog {
 		btnNewButton_3.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				
+				if(!p_insurancetype.equals("Unknown") && !ReceptionMain.insBillAccess) {
+					JOptionPane.showMessageDialog(
+							null,
+							"You don’t have access to view this.",
+							"Access Denied",
+							JOptionPane.WARNING_MESSAGE
+							);
+					return;
+				}
 
 				if (!generated.equals("No")) {
 					try {

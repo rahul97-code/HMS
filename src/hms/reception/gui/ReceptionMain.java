@@ -107,6 +107,7 @@ public class ReceptionMain<EmergencyIPD> extends JFrame {
 	public static String userName = "";
 	ALwaysFront aLwaysFront;
 	String receptionTokenCounter="NO";
+	public static boolean insBillAccess;
 	/**
 	 * Launch the application.
 	 */
@@ -808,6 +809,7 @@ public class ReceptionMain<EmergencyIPD> extends JFrame {
 				lastLoginLB.setText(resultSet.getObject(3).toString());
 				receptionTokenCounter=resultSet.getObject(4).toString();
 				receptionShift=resultSet.getObject(5).toString();
+				insBillAccess=resultSet.getBoolean(6);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

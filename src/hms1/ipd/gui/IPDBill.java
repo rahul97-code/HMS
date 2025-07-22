@@ -542,23 +542,23 @@ public class IPDBill extends JDialog {
 							JOptionPane.INFORMATION_MESSAGE);
 					return;
 				}
-				
+
 				if((!p_insurancetype.equals("Unknown") && payModeIndex==0) || (p_insurancetype.equals("Unknown") && payModeIndex==2)){
-					
-					  int response = JOptionPane.showConfirmDialog(
-				                null,
-				                "You have selected pay mode: " + paymentModeCB.getSelectedItem() + " for Ins: "+p_insurancetype+"\nDo you want to proceed?",
-				                "Confirmation",
-				                JOptionPane.YES_NO_OPTION,
-				                JOptionPane.WARNING_MESSAGE
-				            );
-				            if (!(response == JOptionPane.YES_OPTION)) {
-				            	return;
-				            }
+
+					int response = JOptionPane.showConfirmDialog(
+							null,
+							"You have selected pay mode: " + paymentModeCB.getSelectedItem() + " for Ins: "+p_insurancetype+"\nDo you want to proceed?",
+							"Confirmation",
+							JOptionPane.YES_NO_OPTION,
+							JOptionPane.WARNING_MESSAGE
+							);
+					if (!(response == JOptionPane.YES_OPTION)) {
+						return;
+					}
 				}
 				if(!alreadyPaid) {
 					payMode=paymentModeCB.getSelectedItem().toString();
-				    finalPayment=payment;}
+					finalPayment=payment;}
 				if(!alreadyPaid && (payModeIndex!=0 && payModeIndex!=2)) {	
 					btnNewButton_3.setEnabled(false);					
 					PaymentMain MachinePayDialog=new PaymentMain(new String[]{payment+"",p_id,p_name,ReceptionMain.receptionNameSTR,"IPD DISCHARGE"},"IPD BILL");
@@ -705,8 +705,9 @@ public class IPDBill extends JDialog {
 
 						dispose();
 						try {
-							new IPDBillSlippdf(bill_no, ipd_id, ipdDoctorTB
-									.getText(),true);
+							if(p_insurancetype.equals("Unknown") || ReceptionMain.insBillAccess) 
+								new IPDBillSlippdf(bill_no, ipd_id, ipdDoctorTB
+										.getText(),true);
 						} catch (DocumentException | IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -1167,6 +1168,15 @@ public class IPDBill extends JDialog {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 
+				if(!p_insurancetype.equals("Unknown") && !ReceptionMain.insBillAccess) {
+					JOptionPane.showMessageDialog(
+							null,
+							"You don’t have access to view this.",
+							"Access Denied",
+							JOptionPane.WARNING_MESSAGE
+							);
+					return;
+				}
 				try {
 					new IPDBillSlippdf("Provisional Bill", ipd_id, ipdDoctorTB.getText(),false);
 				} catch (DocumentException | IOException e) {
