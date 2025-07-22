@@ -1,0 +1,21 @@
+public ResultSet retrieveAllIssuedPillsNew(String fromDate3,String toDate3,String fromDate1,String toDate1) {
+		String query = "SELECT a.item_id,a.item_name,a.`item_brand`,a.`item_total_stock`,(select  COALESCE(sum(b.item_qty), 0 ) from `store_pills_register` b where b.item_id=a.item_id AND `date` BETWEEN '"
+				+ fromDate1 + "' AND '" + toDate1 + "')+(select COALESCE(sum(c.item_qty),0) from `dept_pills_register` c where c.item_id=a.item_id AND `date` BETWEEN '"
+				+ fromDate1 + "' AND '" + toDate1 + "') as 'Last Month',(select COALESCE(sum(b.item_qty),0) from `store_pills_register` b where b.item_id=a.item_id AND `date` BETWEEN '"
+				+ fromDate3 + "' AND '" + toDate3 + "')+(select COALESCE(sum(c.item_qty),0) from `dept_pills_register` c where c.item_id=a.item_id AND `date` BETWEEN '"
+				+ fromDate3 + "' AND '" + toDate3 + "') as 'Last Three Months', round(((select COALESCE(sum(b.item_qty),0) from `store_pills_register` b where b.item_id=a.item_id AND `date` BETWEEN '"
+				+ fromDate3 + "' AND '" + toDate3 + "')+(select COALESCE(sum(c.item_qty),0) from `dept_pills_register` c where c.item_id=a.item_id AND `date` BETWEEN '"
+				+ fromDate3 + "' AND '" + toDate3 + "'))/12,0) as 'Reorder Level', round(((select COALESCE(sum(b.item_qty),0) from `store_pills_register` b where b.item_id=a.item_id AND `date` BETWEEN '"
+				+ fromDate3 + "' AND '" + toDate3 + "')+(select COALESCE(sum(c.item_qty),0) from `dept_pills_register` c where c.item_id=a.item_id AND `date` BETWEEN '"
+				+ fromDate3 + "' AND '" + toDate3 + "'))/6,0) as 'Order Qty.' FROM `items_detail` a where round(((select COALESCE(sum(b.item_qty),0) from `store_pills_register` b where b.item_id=a.item_id AND `date` BETWEEN '"
+				+ fromDate3 + "' AND '" + toDate3 + "')+(select COALESCE(sum(c.item_qty),0) from `dept_pills_register` c where c.item_id=a.item_id AND `date` BETWEEN '"
+				+ fromDate3 + "' AND '" + toDate3 + "'))/12,0)>=a.`item_total_stock`";
+		try {
+			rs = statement.executeQuery(query);
+
+		} catch (SQLException sqle) {
+			JOptionPane.showMessageDialog(null, sqle.getMessage(), "ERROR",
+					javax.swing.JOptionPane.ERROR_MESSAGE);
+		}
+		return rs;
+	}

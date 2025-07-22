@@ -1,0 +1,10 @@
+
+mysql -u root -p -e "SHOW VARIABLES LIKE 'sql_mode';"
+
+
+
+mysql -u root -p -e "SET GLOBAL sql_mode = 'NO_ENGINE_SUBSTITUTION';" 
+
+
+
+mysql -u root -p -e "SELECT @@GLOBAL.sql_mode;"
