@@ -649,7 +649,7 @@ public class OPDDBConnection extends DBConnection {
 		return rs;
 	}
 	public ResultSet retrieveOpdSpecialties() { 
-		String query = "select opd_type,name from opd_specialties_master osm where is_active =1 order by id";
+		String query = "select opd_type,name from opd_specialties_master osm where is_active =1 order by sequence";
 		try {
 			rs = statement.executeQuery(query);
 

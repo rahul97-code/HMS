@@ -2,6 +2,7 @@ package hms.patient.slippdf;
 
 import hms.Printer.PrintFile;
 import hms.main.MainLogin;
+import hms.reception.gui.ReceptionMain;
 import hms1.ipd.database.IPDDBConnection;
 
 import java.awt.Desktop;
@@ -74,8 +75,9 @@ public class AdvancePaymentSlippdf {
 
 	
 	public static void main(String a[]) {
+		MainLogin.userName1="kavita";
 		try {
-			new AdvancePaymentSlippdf("cs","d","55153","d","d","d");
+			new AdvancePaymentSlippdf("Dr. Hardeep Singh","5000.0","82094","ANKUSH","62356","Advance Payment");
 		} catch (DocumentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

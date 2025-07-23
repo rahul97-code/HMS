@@ -116,7 +116,7 @@ public class ReceptionMain<EmergencyIPD> extends JFrame {
 			@Override
 			public void run() {
 				try {
-					ReceptionMain frame = new ReceptionMain("ekta");
+					ReceptionMain frame = new ReceptionMain("test");
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();

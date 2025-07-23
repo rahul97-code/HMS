@@ -173,7 +173,7 @@ public class ReceptionistDBConnection extends DBConnection {
 	}
 	public ResultSet retrieveUsernameDetail(String name)
 	{
-	  String query="SELECT  `reception_id`, `reception_name`,`reception_lastlogin`,COALESCE(`reception_text1`, 'NO'),`shift` FROM `reception_detail` WHERE `reception_username` = '"+name+"'";
+	  String query="SELECT  `reception_id`, `reception_name`,`reception_lastlogin`,COALESCE(`reception_text1`, 'NO'),`shift`,ins_bill_access FROM `reception_detail` WHERE `reception_username` = '"+name+"'";
 		try {
 			rs = statement.executeQuery(query);
 		} catch (SQLException sqle) {
