@@ -186,6 +186,7 @@ public class ExamEntery extends JDialog {
 	private JLabel lblTotalcharges_1;
 	private JDateChooser billDateCB;
 	private boolean is_free_test,isFreeTestSlip;
+	private String opd_id="";
 
 
 	public static void main(String r[]) {
@@ -829,6 +830,7 @@ public class ExamEntery extends JDialog {
 						data[17] = iskaruna.get(i);
 						data[18] = rate+"";
 						data[19] = isFreeUSG.get(i)+"";
+						data[20] = opd_id+"";
 						try {
 
 							updatedInsertCounter = examdbConnection.inserDatakaruna(data);
@@ -1566,6 +1568,7 @@ public class ExamEntery extends JDialog {
 				searchPatientTB.setText("" + p_id);
 				affordable  = rs.getBoolean(7);
 				FreeUSG  = rs.getBoolean(8);
+				opd_id  = rs.getString(9);
 			}
 			lblNewLabel.setText(affordable?"Yes":"No");
 

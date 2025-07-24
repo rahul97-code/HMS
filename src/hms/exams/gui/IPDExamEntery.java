@@ -756,7 +756,7 @@ public class IPDExamEntery extends JDialog {
 					data[10] = (String) ObjectArray_examcategories[i];
 					data[11] = (String) examPageNumberVector.get(i);
 					data[16]=examlisCode.get(i);
-					//data[17]=isApproved.get(i);
+					data[17]=ipd_id;
 					try {
 
 						updatedInsertCounter = examdbConnection

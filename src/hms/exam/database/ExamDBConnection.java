@@ -1362,10 +1362,10 @@ public class ExamDBConnection extends DBConnection {
 		return rs.getInt(1);
 	}
 	public int inserDatakaruna(String[] data) throws Exception {
-		String insertSQL = "INSERT INTO `exam_entery`(`exam_name`, `exam_nameid`, `exam_pid`, `exam_pname`, `exam_doctorreff`, `exam_date`, `exam_charges`, `exam_note1`,`exam_room`,`exam_note2`,`exam_cat`,`exam_sample5`,`exam_chargespaid`,`receipt_id`,`p_insurancetype`,`payment_mode`,`lis_code`,`is_karuna`,`charges`,`free_usg`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		String insertSQL = "INSERT INTO `exam_entery`(`exam_name`, `exam_nameid`, `exam_pid`, `exam_pname`, `exam_doctorreff`, `exam_date`, `exam_charges`, `exam_note1`,`exam_room`,`exam_note2`,`exam_cat`,`exam_sample5`,`exam_chargespaid`,`receipt_id`,`p_insurancetype`,`payment_mode`,`lis_code`,`is_karuna`,`charges`,`free_usg`,`ipd_opd_no`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		PreparedStatement preparedStatement = connection.prepareStatement(
 				insertSQL, Statement.RETURN_GENERATED_KEYS);
-		for (int i = 1; i < 21; i++) {
+		for (int i = 1; i < 22; i++) {
 
 			preparedStatement.setString(i, data[i - 1]);
 		}
@@ -1388,10 +1388,10 @@ public class ExamDBConnection extends DBConnection {
 
 	}
 	public int inserDataIPDExam(String[] data) throws Exception {
-		String insertSQL = "INSERT INTO `exam_entery`(`exam_name`, `exam_nameid`, `exam_pid`, `exam_pname`, `exam_doctorreff`, `exam_date`, `exam_charges`, `exam_note1`,`exam_room`,`exam_note2`,`exam_cat`,`exam_sample5`,`exam_chargespaid`,`receipt_id`,`p_insurancetype`,`exam_result5`,`lis_code`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		String insertSQL = "INSERT INTO `exam_entery`(`exam_name`, `exam_nameid`, `exam_pid`, `exam_pname`, `exam_doctorreff`, `exam_date`, `exam_charges`, `exam_note1`,`exam_room`,`exam_note2`,`exam_cat`,`exam_sample5`,`exam_chargespaid`,`receipt_id`,`p_insurancetype`,`exam_result5`,`lis_code`,`ipd_opd_no`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		PreparedStatement preparedStatement = connection.prepareStatement(
 				insertSQL, Statement.RETURN_GENERATED_KEYS);
-		for (int i = 1; i < 18; i++) {
+		for (int i = 1; i < 19; i++) {
 
 			preparedStatement.setString(i, data[i - 1]);
 		}

@@ -674,7 +674,7 @@ public class OPDDBConnection extends DBConnection {
 	}
 
 	public ResultSet retrieveAllDataWithOpdId3(String opd_id) { 
-		String query = "SELECT  `p_id`, `p_name`, `opd_doctor`,`opd_date`, `opd_charge`,`opd_id`, if(opd_date=CURRENT_DATE() and not_affordable!=0,'1','0')t,if(opd_date=CURRENT_DATE() and is_free_usg!=0,'1','0')d FROM `opd_entery` WHERE opd_id ='"
+		String query = "SELECT  `p_id`, `p_name`, `opd_doctor`,`opd_date`, `opd_charge`,`opd_id`, if(opd_date=CURRENT_DATE() and not_affordable!=0,'1','0')t,if(opd_date=CURRENT_DATE() and is_free_usg!=0,'1','0')d,opd_id FROM `opd_entery` WHERE opd_id ='"
 				+ opd_id +"' and `opd_status`!='CANCEL'"; 
 		System.out.println(query);
 		try {
