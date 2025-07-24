@@ -1388,7 +1388,7 @@ public class ExamDBConnection extends DBConnection {
 
 	}
 	public int inserDataIPDExam(String[] data) throws Exception {
-		String insertSQL = "INSERT INTO `exam_entery`(`exam_name`, `exam_nameid`, `exam_pid`, `exam_pname`, `exam_doctorreff`, `exam_date`, `exam_charges`, `exam_note1`,`exam_room`,`exam_note2`,`exam_cat`,`exam_sample5`,`exam_chargespaid`,`receipt_id`,`p_insurancetype`,`exam_result5`,`lis_code`,`ipd_opd_no`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		String insertSQL = "INSERT INTO `exam_entery`(`exam_name`, `exam_nameid`, `exam_pid`, `exam_pname`, `exam_doctorreff`, `exam_date`, `exam_charges`, `exam_note1`,`exam_room`,`exam_note2`,`exam_cat`,`exam_sample5`,`exam_chargespaid`,`receipt_id`,`p_insurancetype`,`exam_result5`,`lis_code`,`ipd_opd_no`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		PreparedStatement preparedStatement = connection.prepareStatement(
 				insertSQL, Statement.RETURN_GENERATED_KEYS);
 		for (int i = 1; i < 19; i++) {

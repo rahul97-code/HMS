@@ -225,7 +225,6 @@ public class LIS_System extends JDialog {
 					// do some action
 					int row = table.getSelectedRow();	
 					Object ob= table.getValueAt(row, 1);
-					receipt_id=ob.toString();
 					System.out.println(ob.toString()+"   arun");
 					if(!ob.toString().equals("") && !ob.toString().equals("...")) 
 					{
@@ -491,6 +490,16 @@ public class LIS_System extends JDialog {
 		pritnbtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
+				if(receipt_id.equals("")) {
+					JOptionPane
+					.showMessageDialog(
+							null,
+							"WorkOrder ID Cannot be null!",
+							"Input Error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+
 				String receiptID="",receiptID2="",amountReciptID="",Amount="",time="";
 				AmountReceiptDBConnection db=new AmountReceiptDBConnection();
 				ResultSet rs=db.retrieveAllRecieptNoNew(receipt_id+"");
@@ -535,13 +544,13 @@ public class LIS_System extends JDialog {
 		btnRebooking.setEnabled(false);
 		btnRebooking.setBounds(166, 566, 131, 25);
 		contentPane.add(btnRebooking);
-		
+
 		examCatCountTF = new JTextField();
 		examCatCountTF.setEditable(false);
 		examCatCountTF.setBounds(416, 567, 90, 25);
 		contentPane.add(examCatCountTF);
 		examCatCountTF.setColumns(10);
-		
+
 		JLabel lblCount = new JLabel("COUNT :");
 		lblCount.setFont(new Font("Dialog", Font.PLAIN, 13));
 		lblCount.setBounds(351, 573, 70, 15);
