@@ -34,10 +34,17 @@ import javax.swing.JScrollPane;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+import com.toedter.calendar.JDateChooser;
+import javax.swing.JLabel;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class TestLabPatientList extends JFrame {
 
@@ -51,6 +58,10 @@ public class TestLabPatientList extends JFrame {
 	amt_received, date, token_no,test_performed,roomNo;
 	private JTable table;
 	Test test;
+
+	public String dateTo;
+	public String dateFrom;
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -79,7 +90,7 @@ public class TestLabPatientList extends JFrame {
 		contentPane.setLayout(null);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 11, 516, 529);
+		scrollPane.setBounds(10, 32, 516, 508);
 		contentPane.add(scrollPane);
 		
 		table = new JTable();
@@ -106,7 +117,7 @@ public class TestLabPatientList extends JFrame {
 		        		  	test.requestFocusInWindow(); 
 		        		  	test.toFront();
 		        		  	test.repaint();
-			        		populateTable( DateFormatChange.StringToMysqlDate(new Date()), DateFormatChange.StringToMysqlDate(new Date()));
+		        			populateTable(dateFrom,dateTo);
 		        	  }
 		        	 
 		        }
@@ -122,12 +133,70 @@ public class TestLabPatientList extends JFrame {
 		table.getTableHeader().setReorderingAllowed(false);
 		table.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
 		scrollPane.setViewportView(table);
-		populateTable( DateFormatChange.StringToMysqlDate(new Date()), DateFormatChange.StringToMysqlDate(new Date()));
+		
+		JDateChooser dateFromDC = new JDateChooser();
+		dateFromDC.setDateFormatString("yyyy-MM-dd");
+		dateFromDC.setBounds(52, 1, 111, 19);
+		contentPane.add(dateFromDC);
+		dateFromDC.setMaxSelectableDate(new Date());
+		dateFromDC.getDateEditor().addPropertyChangeListener(
+				new PropertyChangeListener() {
+					@Override
+					public void propertyChange(PropertyChangeEvent arg0) {
+						// TODO Auto-generated method stub
+						if ("date".equals(arg0.getPropertyName())) {
+							dateFrom = DateFormatChange
+									.StringToMysqlDate((Date) arg0
+											.getNewValue());
+						}
+					}
+				});
+		dateFromDC.setDate(new Date());
+
+		
+		JDateChooser dateToDC = new JDateChooser();
+		dateToDC.setDateFormatString("yyyy-MM-dd");
+		dateToDC.setBounds(217, 1, 104, 19);
+		contentPane.add(dateToDC);
+		dateToDC.setMaxSelectableDate(new Date());
+		dateToDC.getDateEditor().addPropertyChangeListener(
+				new PropertyChangeListener() {
+					@Override
+					public void propertyChange(PropertyChangeEvent arg0) {
+						// TODO Auto-generated method stub
+						if ("date".equals(arg0.getPropertyName())) {
+							dateTo = DateFormatChange
+									.StringToMysqlDate((Date) arg0
+											.getNewValue());
+						}
+					}
+				});
+		dateToDC.setDate(new Date());
+		
+		JLabel lblFrom = new JLabel("from :");
+		lblFrom.setFont(new Font("Dialog", Font.PLAIN, 11));
+		lblFrom.setBounds(15, 4, 70, 15);
+		contentPane.add(lblFrom);
+		
+		JLabel lblTo = new JLabel("To :");
+		lblTo.setFont(new Font("Dialog", Font.PLAIN, 11));
+		lblTo.setBounds(191, 3, 70, 15);
+		contentPane.add(lblTo);
+		
+		JButton btnSearch = new JButton("search");
+		btnSearch.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				populateTable(dateFrom,dateTo);
+			}
+		});
+		btnSearch.setFont(new Font("Dialog", Font.PLAIN, 11));
+		btnSearch.setBounds(346, 1, 104, 19);
+		contentPane.add(btnSearch);
 		
 		}
 	public void getData()
 	{
-		populateTable(DateFormatChange.StringToMysqlDate(new Date()), DateFormatChange.StringToMysqlDate(new Date()));
+		populateTable(dateFrom,dateTo);
 	}
 
 	

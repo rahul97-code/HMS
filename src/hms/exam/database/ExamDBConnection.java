@@ -273,6 +273,7 @@ public class ExamDBConnection extends DBConnection {
 		}
 		return rs;
 	}
+	
 	public String retrieveOrderNo() {
 		String query = "SELECT `receipt_id` FROM `exam_entery` WHERE receipt_id<>'' order by exam_id DESC limit 1";
 		System.out.println(query);
@@ -292,6 +293,21 @@ public class ExamDBConnection extends DBConnection {
 			e.printStackTrace();
 		}
 		return id;
+	}
+	
+	public String retrievePaymentAccessPass() {
+		String query = "SELECT `value` FROM `karun_sparsh_param` WHERE dept = 'PAYMENT_TRACK'";
+		System.out.println(query);
+		try {
+			rs = statement.executeQuery(query);
+			while (rs.next()) {
+				return rs.getObject(1).toString();
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "";
 	}
 	
 	public ResultSet retrievePID(String rec_id) {
@@ -401,6 +417,20 @@ public class ExamDBConnection extends DBConnection {
 		return rs;
 	}
 
+	public ResultSet retrievePerformedExamData(String dateFrom, String dateTo, String room) {
+		String query = "select exam_id,exam_pid, exam_pname,exam_name, ee.exam_performed  from 	exam_entery ee WHERE\r\n"
+				+ "	ee.`exam_date` BETWEEN '"+dateFrom+"' AND '"+dateTo+"'\r\n"
+				+ "	and ee.exam_performed <> 'Cancel'\r\n"
+				+ "	and ee.exam_room = '"+room+"' order by ee.receipt_id";
+		System.out.println(query);
+		try {
+			rs = statement.executeQuery(query);
+		} catch (SQLException sqle) {
+			JOptionPane.showMessageDialog(null, sqle.getMessage(), "ERROR",
+					javax.swing.JOptionPane.ERROR_MESSAGE);
+		}
+		return rs;
+	}
 	public ResultSet retrieveAllOpdExams(String dateFrom, String dateTo, int iscashless) {
 		String query = "SELECT exam_id,receipt_id,exam_name,exam_pid,exam_pname,exam_doctorreff,exam_date,exam_charges,ee.p_insurancetype,payment_mode,is_cashless  from exam_entery ee ,patient_detail pd where ee.p_insurancetype<>'Unknown' and ee.exam_pid =pd.pid1 and exam_result5 is null  and ee.exam_performed <>'cancel' and ee.exam_date between '"+dateFrom+"' AND '"+dateTo+"' and pd.is_cashless = "+iscashless+" ORDER BY `exam_id` DESC";
 		System.out.println(query);
