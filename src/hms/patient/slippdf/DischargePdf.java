@@ -29,7 +29,6 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.sf.jasperreports.engine.export.oasis.ParagraphStyle;
 
 import jcifs.smb.SmbException;
 import jcifs.smb.SmbFile;

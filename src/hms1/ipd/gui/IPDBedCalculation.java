@@ -5,7 +5,6 @@ import hms.departments.gui.DepartmentMain;
 import hms.doctor.database.DoctorDBConnection;
 import hms.main.DateFormatChange;
 import hms.main.NumberToWordConverter;
-import hms.main.loading;
 import hms.patient.database.PatientDBConnection;
 import hms.reception.gui.ReceptionMain;
 import hms.store.gui.BatchBrowser;

@@ -15,6 +15,7 @@ import hms.emailreports.gui.EmailReports;
 import hms.exams.gui.AllExamsDetail;
 import hms.exams.gui.ExamsBrowser;
 import hms.insurance.gui.AddInsuranceType;
+import hms.insurance.gui.ManageInsurance;
 import hms.insurance.gui.insuranse_item_status;
 import hms.main.AboutHMS;
 import hms.main.ChangeMessage;
@@ -654,6 +655,13 @@ public class AdminMain extends JFrame {
 
 		JMenuItem mntmMangeInsuranceTypes = new JMenuItem(
 				"Mange Insurance Types");
+		mntmMangeInsuranceTypes.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ManageInsurance ManageInsurance=new ManageInsurance();
+				ManageInsurance.setModal(true);
+				ManageInsurance.setVisible(true);	
+			}
+		});
 		mntmMangeInsuranceTypes.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		mnInsuranceMaster.add(mntmMangeInsuranceTypes);
 

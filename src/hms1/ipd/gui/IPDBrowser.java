@@ -2,8 +2,6 @@ package hms1.ipd.gui;
 
 import hms.departments.gui.IndoorProcedureEntry;
 import hms.main.DateFormatChange;
-import hms.main.ProgressBar;
-import hms.main.loading;
 import hms.patient.slippdf.PO_PDF;
 import hms.patient.slippdf.PatientLabelPrint;
 import hms.reception.gui.ReceptionMain;
