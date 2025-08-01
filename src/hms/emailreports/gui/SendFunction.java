@@ -1,9 +1,5 @@
 package hms.emailreports.gui;
-/**
- * Developed by sukhpal saini
- * @MDI
- * Production Planner
- */
+
 
 import hms.main.DBConnection;
 import hms.main.NewsDBConnection;
@@ -14,9 +10,9 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
+//import javax.activation.DataHandler;
+//import javax.activation.DataSource;
+//import javax.activation.FileDataSource;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
@@ -107,8 +103,8 @@ public class SendFunction {
 				System.out.print(attachment[i]);
 				String file = "localTemp/"+attachment[i];
 				String fileName = ""+attachment[i];
-				DataSource source = new FileDataSource(file);
-				messageBodyPart.setDataHandler(new DataHandler(source));
+//				DataSource source = new FileDataSource(file);
+//				messageBodyPart.setDataHandler(new DataHandler(source));
 				messageBodyPart.setFileName(fileName);
 				multipart.addBodyPart(messageBodyPart);
 			}
