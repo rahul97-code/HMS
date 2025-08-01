@@ -116,7 +116,7 @@ public class TokenEntryExam extends JDialog {
 		counterThread.start();
 		connection.closeConnection();
 		dispose();
-		ExamEntery opdEntery=new ExamEntery(browser);
+		ExamEntery opdEntery=new ExamEntery();
 		opdEntery.setVisible(true);
 		
 	}

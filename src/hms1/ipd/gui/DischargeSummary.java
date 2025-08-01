@@ -2,8 +2,7 @@ package hms1.ipd.gui;
 
 import hms.patient.slippdf.*;
 
-import com.hexidec.ekit.Ekit;
-import com.hexidec.ekit.EkitApplet;
+
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.codec.Base64.InputStream;
 

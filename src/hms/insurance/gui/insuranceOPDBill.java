@@ -6,7 +6,6 @@ import hms.exams.gui.AllExamsDetail;
 import hms.main.DateFormatChange;
 import hms.main.GeneralDBConnection;
 import hms.main.NumberToWordConverter;
-import hms.main.loading;
 import hms.opd.database.OPDDBConnection;
 import hms.patient.database.PatientDBConnection;
 import hms.patient.database.PaymentDBConnection;

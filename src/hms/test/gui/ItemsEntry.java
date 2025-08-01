@@ -923,7 +923,7 @@ public class ItemsEntry extends JDialog {
 					data[1] = "LAB";  //dept name
 					data[2] = ""+doctorID;  //user id
 					data[3] = doctorName;  //user name
-					data[4] = Test.op;  //user id
+					data[4] = Test.exam_operator;  //user id
 					data[5] = Test.exam_operator;  //user name
 					data[6] = p_id;
 					data[7] = p_name;

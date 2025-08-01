@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Vector;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -18,6 +19,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.JCheckBox;
+import javax.swing.border.BevelBorder;
 
 public class AddInsuranceType extends JDialog {
 
@@ -26,8 +29,14 @@ public class AddInsuranceType extends JDialog {
 	private JTextField detailTB;
 	private JTextField percentageTB;
 	private JComboBox rateTypeCB;
-	private JButton btnNewButton;
+	DefaultComboBoxModel rateModel=new DefaultComboBoxModel();
+	DefaultComboBoxModel copyRateModel=new DefaultComboBoxModel();
+
+	Vector<String> rateV=new Vector<>();
+	Vector<String> copyRateV=new Vector<>();
 	public int global;
+	private JTextField RatyTF;
+	private JComboBox rateTypeCB_1;
 
 	/**
 	 * Launch the application.
@@ -46,7 +55,7 @@ public class AddInsuranceType extends JDialog {
 	 * Create the dialog.
 	 */
 	public AddInsuranceType() {
-		setBounds(100, 100, 350, 300);
+		setBounds(100, 100, 669, 252);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -90,56 +99,71 @@ public class AddInsuranceType extends JDialog {
 
 		JLabel lblRateType = new JLabel("Rate Type :");
 		lblRateType.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		lblRateType.setBounds(10, 183, 106, 22);
+		lblRateType.setBounds(365, 41, 106, 22);
 		contentPanel.add(lblRateType);
 
 		rateTypeCB = new JComboBox();
 		rateTypeCB.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				global=rateTypeCB.getSelectedIndex()+1;
+				int index=rateTypeCB.getSelectedIndex();
+				if(index==0) {
+					rateTypeCB_1.setEnabled(true);
+				}else {
+					rateTypeCB_1.setEnabled(false);
+				}
 			}
 		});
 		rateTypeCB.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		rateTypeCB.setModel(new DefaultComboBoxModel(new String[] {
-				"Rate Type 1", "Rate Type 2", "Rate Type 3", "Rate Type 4" }));
-		rateTypeCB.setBounds(126, 179, 198, 30);
+		rateTypeCB.setBounds(452, 37, 198, 30);
 		contentPanel.add(rateTypeCB);
 
 		JLabel lblAddInsurance = new JLabel("Add Insurance");
 		lblAddInsurance.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		lblAddInsurance.setBounds(100, 0, 127, 25);
 		contentPanel.add(lblAddInsurance);
+
+		JPanel panel = new JPanel();
+		panel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		panel.setBounds(344, 85, 306, 88);
+		contentPanel.add(panel);
+		panel.setLayout(null);
+
+		rateTypeCB_1 = new JComboBox();
+		rateTypeCB_1.setFont(new Font("Dialog", Font.PLAIN, 13));
+		rateTypeCB_1.setBounds(95, 46, 198, 30);
+		panel.add(rateTypeCB_1);
+		rateTypeCB_1.setEnabled(false);
+
+		JLabel lblCopy = new JLabel("Copy Of :");
+		lblCopy.setFont(new Font("Dialog", Font.PLAIN, 13));
+		lblCopy.setBounds(8, 50, 106, 22);
+		panel.add(lblCopy);
+
+		RatyTF = new JTextField();
+		RatyTF.setEditable(false);
+		RatyTF.setBounds(132, 11, 54, 25);
+		panel.add(RatyTF);
+		RatyTF.setColumns(10);
+
+		JLabel lblNewRateType = new JLabel("New Rate Type :");
+		lblNewRateType.setFont(new Font("Dialog", Font.PLAIN, 13));
+		lblNewRateType.setBounds(8, 12, 106, 22);
+		panel.add(lblNewRateType);
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
-				JButton okButton = new JButton("OK");
+				JButton okButton = new JButton("SAVE");
 				okButton.addActionListener(new ActionListener() {
-					
-
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						global=0;
-						int ss=rateTypeCB.getSelectedIndex()+1;
-						 global=rateTypeCB.getSelectedIndex()+1;
-						boolean bool = false;
-						InsuranceDBConnection dbConnection=new InsuranceDBConnection();
-					
-						boolean resultSet1=dbConnection.checkingtable(ss);
-						
-						
-						
-						
+						int index=rateTypeCB.getSelectedIndex();
+						String rateTypeStr=RatyTF.getText().toString();
+						String oldRateType=copyRateV.get(rateTypeCB_1.getSelectedIndex());
+						String data[] =new String[10];
 
-							if(!resultSet1 && ss!=1) {
-							JOptionPane.showMessageDialog(null, "Please Create table first of rate type",
-									"Input Error", JOptionPane.ERROR_MESSAGE);
-							btnNewButton.setEnabled(true);
-							return;
-							}
-							
-						
+						InsuranceDBConnection dbConnection=new InsuranceDBConnection();	
 						if(nameTB.getText().toString().equals(""))
 						{
 							JOptionPane.showMessageDialog(null, "Please enter name",
@@ -153,22 +177,28 @@ public class AddInsuranceType extends JDialog {
 							JOptionPane.showMessageDialog(null, "Please enter percentage",
 									"Input Error", JOptionPane.ERROR_MESSAGE);
 						}else{
-							 ss=rateTypeCB.getSelectedIndex()+1;
-							String data[] =new String[10];
-							
 							data[0]=nameTB.getText().toString();
 							data[1]=detailTB.getText().toString();
 							data[2]=percentageTB.getText().toString();
-							data[3]=ss+"";
-							
-							
-							//InsuranceDBConnection dbConnection=new InsuranceDBConnection();
+							data[3]=index==0?rateTypeStr:rateV.get(rateTypeCB.getSelectedIndex());;
 							try {
 								dbConnection.inserData(data);
 							} catch (Exception e1) {
 								// TODO Auto-generated catch block
 								e1.printStackTrace();
 							}
+							if(index==0) {
+								if(dbConnection.checkingtable(Integer.parseInt(rateTypeStr))) {
+									JOptionPane.showMessageDialog(null, "This RatyType Table is already exist.",
+											"Input Error", JOptionPane.ERROR_MESSAGE);
+									return;
+								}
+								int rateTypeStrInt=Integer.parseInt(rateTypeStr);
+								int oldRateTypeInt=Integer.parseInt(oldRateType);
+								dbConnection.createNewInsTable(rateTypeStrInt,oldRateTypeInt);
+								dbConnection.copyInsTable(rateTypeStrInt, oldRateTypeInt);
+							}
+
 							dbConnection.closeConnection();
 							JOptionPane.showMessageDialog(null, "New Inurance Type Add Successfully",
 									"Insurance save", JOptionPane.INFORMATION_MESSAGE);
@@ -176,19 +206,6 @@ public class AddInsuranceType extends JDialog {
 						}
 					}
 				});
-				
-				 btnNewButton = new JButton("Create Table");
-				btnNewButton.setEnabled(false);
-				btnNewButton.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						InsuranceDBConnection dbConnection=new InsuranceDBConnection();
-						// String name=JOptionPane.showInputDialog(null,"Enter RateType Integer value");  
-						 dbConnection.createtable(global);
-						 
-						 
-					}
-				});
-				buttonPane.add(btnNewButton);
 				okButton.setFont(new Font("Tahoma", Font.PLAIN, 13));
 				okButton.setActionCommand("OK");
 				buttonPane.add(okButton);
@@ -198,7 +215,7 @@ public class AddInsuranceType extends JDialog {
 				JButton cancelButton = new JButton("Cancel");
 				cancelButton.addActionListener(new ActionListener() {
 					@Override
-					public void actionPerformed(ActionEvent arg0) {
+					public void actionPerformed(ActionEvent arg0 ) {
 						dispose();
 					}
 				});
@@ -206,6 +223,37 @@ public class AddInsuranceType extends JDialog {
 				cancelButton.setActionCommand("Cancel");
 				buttonPane.add(cancelButton);
 			}
+			getAllRateType();
+
+		}
+	}
+
+	public void getAllRateType(){
+		rateV.removeAllElements();
+		rateModel.removeAllElements();
+		copyRateV.removeAllElements();
+		copyRateModel.removeAllElements();
+		InsuranceDBConnection db=new InsuranceDBConnection();
+		ResultSet rs=db.retrieveAllRateType();
+		rateModel.addElement("NEW RATE TYPE");
+		rateV.add("0");
+		try {
+			while(rs.next()) {
+				copyRateModel.addElement("RATE TYPE "+rs.getString(1));
+				rateModel.addElement("RATE TYPE "+rs.getString(1));
+				rateV.add(rs.getString(1));
+				copyRateV.add(rs.getString(1));
+				RatyTF.setText(""+(rs.getInt(1)+1));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		db.closeConnection();
+		if(rateModel.getSize()>0) {
+			rateTypeCB.setModel(rateModel);
+			rateTypeCB_1.setModel(copyRateModel);
+			rateTypeCB.setSelectedIndex(1);
 		}
 	}
 }

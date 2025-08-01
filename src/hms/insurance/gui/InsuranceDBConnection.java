@@ -110,6 +110,17 @@ public class InsuranceDBConnection extends DBConnection {
 		}
 		return rs;
 	}
+	public ResultSet retrieveAllRateType() { 
+		String query = "select distinct ins_ratetype from insurance_detail id order by 1";
+		try {
+			System.out.println(query);
+			rs = statement.executeQuery(query);
+		} catch (SQLException sqle) {
+			JOptionPane.showMessageDialog(null, sqle.getMessage(), "ERROR",
+					javax.swing.JOptionPane.ERROR_MESSAGE);
+		}
+		return rs;
+	}
 	public void insertdatatracking(String[] data) throws Exception {
 		String insertSQL = "INSERT INTO insurance_reimbursement_tracking (ipd_id, insurance_type, bill_amount, submitted_amount, recieved_amount, obj_raised, submit_date, submit_entry_user,utr_number) VALUES(?,?,?, ?, ?, ?, ?, ?, ?)";
 		System.out.println(insertSQL);  
@@ -342,50 +353,54 @@ public class InsuranceDBConnection extends DBConnection {
 		return rs;
 	}
 
-	public boolean checkingtable(int itemid) {
-		String table="exam_master_"+itemid;
-		boolean bool = false;
-		String query = "SELECT IF( EXISTS(\r\n"
+	public boolean checkingtable(int rate) {
+		String table="exam_master";
+		if(rate>1)
+			table="exam_master_"+rate;
+		String query = "SELECT IF(EXISTS(\r\n"
 				+ "             SELECT *\r\n"
 				+ "             FROM INFORMATION_SCHEMA.TABLES\r\n"
 				+ "           WHERE TABLE_NAME = '"+table+"'), 1, 0);";
-
 		System.out.println(query);
 		try {
 			rs = statement.executeQuery(query);
 			while (rs.next()) {
-				bool=rs.getBoolean(1);
-				System.out.print("djdjdjdjd"+bool);
-			}
+				return rs.getBoolean(1);}
 		}catch (SQLException sqle) {
 			JOptionPane.showMessageDialog(null, sqle.getMessage(), "ERROR",
 					javax.swing.JOptionPane.ERROR_MESSAGE);
 		}
-		return bool;
+		return false;
 	}
-	public ResultSet createtable(int itemid) {
-		String table_name = "exam_master";
-		table_name = table_name + "_" + itemid;
-		String query ="CREATE TABLE `"+table_name+"` (\r\n"
-				+ "  `exam_code` int(10) NOT NULL AUTO_INCREMENT,\r\n"
-				+ "  `exam_desc` varchar(255) DEFAULT NULL,\r\n"
-				+ "  `exam_subcat` varchar(255) DEFAULT NULL,\r\n"
-				+ "  `exam_lab` varchar(255) DEFAULT NULL,\r\n"
-				+ "  `exam_room` varchar(255) DEFAULT NULL,\r\n"
-				+ "  `exam_operator` varchar(255) DEFAULT NULL,\r\n"
-				+ "  `exam_rate` varchar(250) NOT NULL DEFAULT '0',\r\n"
-				+ "  `exam_code_1` varchar(250) NOT NULL DEFAULT '0',\r\n"
-				+ "  `exam_name_1` varchar(250) NOT NULL DEFAULT 'NA',\r\n"
-				+ "  `exam_text1` varchar(255) DEFAULT NULL,\r\n"
-				+ "  `exam_text2` varchar(255) DEFAULT NULL,\r\n"
-				+ "  `lis_mapping_code` int(10) DEFAULT NULL,\r\n"
-				+ "  PRIMARY KEY (`exam_code`)\r\n"
-				+ ") ENGINE = InnoDB AUTO_INCREMENT = 2090 DEFAULT CHARSET = utf8;"; 
+	public ResultSet createNewInsTable(int newRateType,int copyRateType) {
+		String table="exam_master";
+		String new_table="exam_master",old_table = "exam_master";
+		if(newRateType>1)
+			new_table = table+"_"+newRateType;
+		if(copyRateType>1)
+			old_table = table+"_"+copyRateType;
+		String query ="create table "+new_table+" like "+old_table+""; 
 
 		try {
 			statement.execute(query);
-			JOptionPane.showMessageDialog(null,"Sucessfully Uploaded "+table_name+" table",
-					"Sucess", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+		} catch (SQLException sqle) {
+			JOptionPane.showMessageDialog(null, sqle.getMessage(), "ERROR",
+					javax.swing.JOptionPane.ERROR_MESSAGE);
+		}
+		return rs;
+	}
+	
+	public ResultSet copyInsTable(int newRateType,int copyRateType) {
+		String table="exam_master";
+		String new_table="exam_master",old_table = "exam_master";
+		if(newRateType>1)
+			new_table = table+"_"+newRateType;
+		if(copyRateType>1)
+			old_table = table+"_"+copyRateType;
+		String query ="insert into "+new_table+" select * from "+old_table+""; 
+
+		try {
+			statement.execute(query);
 		} catch (SQLException sqle) {
 			JOptionPane.showMessageDialog(null, sqle.getMessage(), "ERROR",
 					javax.swing.JOptionPane.ERROR_MESSAGE);

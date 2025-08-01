@@ -24,14 +24,14 @@ public class internalfram extends JFrame
         desktop.setDesktopManager( new NoDragDesktopManager() );
         getContentPane().add( desktop );
         desktop.removeAll();
-        OPDBrowser newPatient=new OPDBrowser();
+        OPDBrowser newPatient=new OPDBrowser("");
         desktop.add( createInternalFrame(1, Color.RED) );
        
     }
 
     private JInternalFrame createInternalFrame(int number, Color background)
     {
-    	OPDBrowser newPatient=new OPDBrowser();
+    	OPDBrowser newPatient=new OPDBrowser("");
         JInternalFrame internal =
             new JInternalFrame("Frame", false, true, false, true);
       //  internal.setContentPane(newPatient.getContentPane());

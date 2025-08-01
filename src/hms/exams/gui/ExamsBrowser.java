@@ -195,7 +195,7 @@ public class ExamsBrowser extends JDialog {
 				
 				
 				if (ReceptionMain._id.equals("0")) {
-					ExamEntery opdEntery = new ExamEntery(ExamsBrowser.this);
+					ExamEntery opdEntery = new ExamEntery();
 					opdEntery.setVisible(true);
 				} else {
 					TokenEntryExam tokenEntry = new TokenEntryExam(ExamsBrowser.this);
@@ -342,7 +342,7 @@ public class ExamsBrowser extends JDialog {
 		JButton btnIpdNewExam = new JButton("IPD Exam Entry");
 		btnIpdNewExam.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				IPDExamEntery opdEntery = new IPDExamEntery(ExamsBrowser.this);
+				IPDExamEntery opdEntery = new IPDExamEntery(null);
 				opdEntery.setVisible(true);
 			}
 		});

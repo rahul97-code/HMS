@@ -6,7 +6,6 @@ import hms.doctor.gui.PatientOPDHistory;
 import hms.doctor.gui.PatientTestHistory;
 import hms.main.DateFormatChange;
 import hms.main.GeneralDBConnection;
-import hms.main.internalfram;
 import hms.patient.database.PatientDBConnection;
 import hms.patient.slippdf.PillsSlippdf;
 import hms.store.database.IssuedItemsDBConnection;

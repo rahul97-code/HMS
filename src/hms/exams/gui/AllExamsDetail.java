@@ -29,6 +29,8 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -36,6 +38,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.ComboBoxModel;
+import java.awt.Font;
+import javax.swing.JTextField;
 
 public class AllExamsDetail extends JDialog {
 
@@ -49,6 +53,7 @@ public class AllExamsDetail extends JDialog {
 	private JButton btnAddTableValue;
 	private JButton btnEditExam;
 	int selectedRowIndex;
+	Vector originalTableModel;
 	JButton btnNewButton_dlt;
 	Vector<String> allExams = new Vector<String>();
 	final DefaultComboBoxModel exams = new DefaultComboBoxModel();
@@ -60,6 +65,7 @@ public class AllExamsDetail extends JDialog {
 	private JLabel lblSelectTable;
 	private JComboBox selectTableCB;
 	String tableNameSTR="exam_master";
+	private JTextField searchField;
 	/**
 	 * Launch the application.
 	 */
@@ -146,12 +152,13 @@ public class AllExamsDetail extends JDialog {
 				}
 			}
 		});
-		comboBox.setBounds(17, 117, 173, 32);
+		comboBox.setBounds(17, 139, 173, 32);
 		contentPanel.add(comboBox);
 
 		JLabel lblNewLabel = new JLabel("Select Exam Category");
+		lblNewLabel.setFont(new Font("Dialog", Font.PLAIN, 11));
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setBounds(17, 85, 173, 21);
+		lblNewLabel.setBounds(17, 118, 173, 21);
 		contentPanel.add(lblNewLabel);
 
 		btnNewButton = new JButton("Add New Exam");
@@ -164,7 +171,7 @@ public class AllExamsDetail extends JDialog {
 				addExamsType.setVisible(true);
 			}
 		});
-		btnNewButton.setBounds(28, 159, 155, 37);
+		btnNewButton.setBounds(28, 181, 155, 37);
 		contentPanel.add(btnNewButton);
 
 		btnNewButton_1 = new JButton("Add Test Ref.");
@@ -187,7 +194,7 @@ public class AllExamsDetail extends JDialog {
 				}
 			}
 		});
-		btnNewButton_1.setBounds(28, 207, 155, 37);
+		btnNewButton_1.setBounds(28, 229, 155, 37);
 		contentPanel.add(btnNewButton_1);
 
 		btnAddTableValue = new JButton("Add Table Value");
@@ -210,11 +217,11 @@ public class AllExamsDetail extends JDialog {
 				}
 			}
 		});
-		btnAddTableValue.setBounds(28, 255, 155, 37);
+		btnAddTableValue.setBounds(28, 277, 155, 37);
 		contentPanel.add(btnAddTableValue);
 
 		btnEditTestRef = new JButton("Edit Test Ref.");
-		btnEditTestRef.setBounds(28, 303, 155, 37);
+		btnEditTestRef.setBounds(28, 325, 155, 37);
 		contentPanel.add(btnEditTestRef);
 
 		btnEditTableValue = new JButton("Edit Table Value");
@@ -231,7 +238,7 @@ public class AllExamsDetail extends JDialog {
 				}
 			}
 		});
-		btnEditTableValue.setBounds(28, 351, 155, 37);
+		btnEditTableValue.setBounds(28, 373, 155, 37);
 		contentPanel.add(btnEditTableValue);
 
 		btnEditExam = new JButton("Edit Exam");
@@ -250,16 +257,17 @@ public class AllExamsDetail extends JDialog {
 
 			}
 		});
-		btnEditExam.setBounds(28, 396, 155, 37);
+		btnEditExam.setBounds(28, 418, 155, 37);
 		contentPanel.add(btnEditExam);
 		
 		lblSelectTable = new JLabel("Select Table");
+		lblSelectTable.setFont(new Font("Dialog", Font.PLAIN, 11));
 		lblSelectTable.setHorizontalAlignment(SwingConstants.CENTER);
-		lblSelectTable.setBounds(17, 10, 173, 21);
+		lblSelectTable.setBounds(17, 56, 173, 21);
 		contentPanel.add(lblSelectTable);
 		
 		selectTableCB = new JComboBox(tableName);
-		selectTableCB.setBounds(17, 42, 173, 32);
+		selectTableCB.setBounds(17, 80, 173, 32);
 		contentPanel.add(selectTableCB);
 		
 	    btnNewButton_dlt = new JButton("Delete");
@@ -301,8 +309,41 @@ public class AllExamsDetail extends JDialog {
 				
 			}
 		});
-		btnNewButton_dlt.setBounds(28, 445, 155, 37);
+		btnNewButton_dlt.setBounds(28, 467, 155, 37);
 		contentPanel.add(btnNewButton_dlt);
+		
+		searchField = new JTextField();
+		searchField.setColumns(10);
+		searchField.setBounds(12, 30, 178, 25);
+		contentPanel.add(searchField);
+		
+		searchField.getDocument().addDocumentListener(
+				new DocumentListener() {
+					@Override
+					public void insertUpdate(DocumentEvent e) {
+						String str = searchField.getText() + "";
+						searchTableContents(str);
+
+					}
+
+					@Override
+					public void removeUpdate(DocumentEvent e) {
+						String str = searchField.getText() + "";
+						searchTableContents(str);
+					}
+
+					@Override
+					public void changedUpdate(DocumentEvent e) {
+						String str = searchField.getText() + "";
+						searchTableContents(str);
+					}
+				});
+		
+		JLabel lblSearch = new JLabel("Search");
+		lblSearch.setHorizontalAlignment(SwingConstants.CENTER);
+		lblSearch.setFont(new Font("Dialog", Font.PLAIN, 11));
+		lblSearch.setBounds(16, 12, 173, 21);
+		contentPanel.add(lblSearch);
 		
 		selectTableCB.addActionListener(new ActionListener() {
 			@Override
@@ -329,18 +370,12 @@ public class AllExamsDetail extends JDialog {
 			TestMasterDBConnection db = new TestMasterDBConnection();
 			ResultSet rs = db.retrieveAllData(tableNameSTR,examName);
 
-			// System.out.println("Table: " + rs.getMetaData().getTableName(1));
 			int NumberOfColumns = 0, NumberOfRows = 0;
 			NumberOfColumns = rs.getMetaData().getColumnCount();
-
-			while (rs.next()) {
-				NumberOfRows++;
-			}
-			System.out.println("rows : " + NumberOfRows);
-			System.out.println("columns : " + NumberOfColumns);
-			rs = db.retrieveAllData(tableNameSTR,examName);
-
-			// to set rows in this array
+			rs.last();
+			NumberOfRows =rs.getRow();
+			rs.beforeFirst();
+		
 			Object Rows_Object_Array[][];
 			Rows_Object_Array = new Object[NumberOfRows][NumberOfColumns];
 
@@ -372,6 +407,9 @@ public class AllExamsDetail extends JDialog {
 			table.getColumnModel().getColumn(3).setMinWidth(150);
 			table.getColumnModel().getColumn(4).setPreferredWidth(100);
 			table.getColumnModel().getColumn(4).setMinWidth(100);
+			
+			originalTableModel = (Vector) ((DefaultTableModel) table.getModel())
+					.getDataVector().clone();
 			db.closeConnection();
 		} catch (SQLException ex) {
 			Logger.getLogger(ExamsBrowser.class.getName()).log(Level.SEVERE,
@@ -380,6 +418,10 @@ public class AllExamsDetail extends JDialog {
 		TableColumnModel tcm = table.getColumnModel();
         TableColumn tm = tcm.getColumn(4);
         tm.setCellRenderer(new ColoredTableCellRenderer());
+        
+        if(table.getRowCount()>0) {
+        	get();
+        }
 	}
 
 	public void getTabels() throws SQLException
@@ -415,7 +457,32 @@ public class AllExamsDetail extends JDialog {
 			return this;
 		}
 	}
+	
+	public void searchTableContents(String searchString) {
+		
 
+		DefaultTableModel currtableModel = (DefaultTableModel) table.getModel();
+		// To empty the table before search
+		currtableModel.setRowCount(0);
+		// To search for contents from original table content
+		for (Object rows : originalTableModel) {
+			Vector rowVector = (Vector) rows;
+			for (Object column : rowVector) {
+				if (column.toString().toLowerCase().contains(searchString.toLowerCase())) {
+					// content found so adding to table
+					currtableModel.addRow(rowVector);
+					break;
+				}
+			}
+		}
+		
+	}
+	
+
+	private void get() {
+		// TODO Auto-generated method stub
+		table.setAutoCreateRowSorter(true);
+	}
 	public void getAllExamList(String tableName) {
 		exams.removeAllElements();
 		exams.addElement("All Exams");
