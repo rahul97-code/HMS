@@ -155,7 +155,6 @@ public class DischargeSummary extends Application {
 		final HTMLEditor htmlEditor = new HTMLEditor();
 		htmlEditor.setPrefHeight(370);
 		htmlEditor.setHtmlText(message_body);
-
 		root.getChildren().add(htmlEditor);
 
 		// Ekit e1=new Ekit();
