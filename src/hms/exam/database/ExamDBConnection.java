@@ -926,6 +926,7 @@ public class ExamDBConnection extends DBConnection {
 				+ room
 				+ "'";
 		try {
+			System.out.println(query + "  queryyyyy");
 			rs = statement.executeQuery(query);
 
 		} catch (SQLException sqle) {
