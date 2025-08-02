@@ -169,6 +169,7 @@ public class FinancialCouncling extends JDialog {
         btnBill.setBounds(20, 605, 142, 25);
         btnBill.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                        	
                 int row = patientTable.getSelectedRow();
                 if (row >= 0) {
                     String IpdId = patientModel.getValueAt(row, 0).toString();
@@ -186,6 +187,12 @@ public class FinancialCouncling extends JDialog {
             }
         });
         getContentPane().add(btnBill);
+        
+        if(ReceptionMain.insBillAccess) {
+        	btnBill.setEnabled(true);
+        }else {
+        	btnBill.setEnabled(false);
+        }
 
         JLabel lblSearchTab = new JLabel("Search :");
         lblSearchTab.setBounds(620, 253, 70, 15);

@@ -84,8 +84,10 @@ public class ManageInsurance extends JDialog {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if(StoreMain.update_item_access.equals("1") || StoreMain.access.equals("1"))
-				{btnUpdate.setEnabled(true);
-				btnDelete.setEnabled(true);}
+				{
+//				btnUpdate.setEnabled(true);
+//				btnDelete.setEnabled(true);
+				}
 				
 				index=-1;
 				index=table.getSelectedRow();

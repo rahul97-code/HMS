@@ -494,7 +494,7 @@ public class LIS_System extends JDialog {
 					JOptionPane
 					.showMessageDialog(
 							null,
-							"WorkOrder ID Cannot be null!",
+							"Please select any row first!",
 							"Input Error",
 							JOptionPane.ERROR_MESSAGE);
 					return;

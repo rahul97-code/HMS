@@ -2,6 +2,7 @@ package hms.reception.gui;
 
 import hms.admin.gui.DailyCash;
 import hms.doctor.gui.DoctorMain;
+import hms.exam.database.ExamDBConnection;
 import hms.exams.gui.ExamEntery;
 import hms.exams.gui.ExamsBrowser;
 import hms.insurance.gui.InsurancePayments;
@@ -66,6 +67,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
@@ -304,13 +306,29 @@ public class ReceptionMain<EmergencyIPD> extends JFrame {
 		JButton btnDfg = new JButton("Payment Track");
 		btnDfg.setBounds(10, 367, 199, 39);
 		btnDfg.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				InsurancePayments obj=new InsurancePayments("", "");
-				obj.setVisible(true);
-				obj.setModal(true);
-				
-			}
+		    public void actionPerformed(ActionEvent e) {
+		        JPasswordField passwordField = new JPasswordField();
+		        ExamDBConnection db =new ExamDBConnection();
+		        Object[] message = { "Enter Password:", passwordField };
+
+		        int option = JOptionPane.showConfirmDialog(
+		            null, message, "Password Required", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE
+		        );
+
+		        if (option == JOptionPane.OK_OPTION) {
+		            String enteredPassword = new String(passwordField.getPassword());		          
+		            if (db.retrievePaymentAccessPass().equals(enteredPassword)) {
+		                InsurancePayments obj = new InsurancePayments("", "");
+		                obj.setVisible(true);
+		                obj.setModal(true);
+		            } else {
+		                JOptionPane.showMessageDialog(null, "Incorrect password!", "Access Denied", JOptionPane.ERROR_MESSAGE);
+		            }
+		        }
+		        db.closeConnection();
+		    }
 		});
+
 		btnDfg.setFont(new Font("Dialog", Font.PLAIN, 20));
 		panel.add(btnDfg);
 
