@@ -120,8 +120,6 @@ public class ReferenceTableDBConnection extends DBConnection {
 	  String query="SELECT `ref_id` FROM `test_reference` WHERE `exam_id` = '"+exam_id+"' AND `ref_patienttype` = '"+p_type+"' AND `ref_agemin`<="+patient_age+" AND `ref_agemax`>="+patient_age+" AND `ref_patientsex` IN ('Both', '"+patient_sex+"')";
 	  try {
 			rs = statement.executeQuery(query);
-			
-			
 		} catch (SQLException sqle) {
 			JOptionPane.showMessageDialog(null, sqle.getMessage(), "ERROR",
 			javax.swing.JOptionPane.ERROR_MESSAGE);
