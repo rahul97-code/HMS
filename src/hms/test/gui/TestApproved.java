@@ -196,7 +196,7 @@ public class TestApproved extends JDialog {
 		table.getColumnModel().getColumn(3).setMinWidth(400);
 		table.getColumnModel().getColumn(4).setPreferredWidth(70);
 		table.getColumnModel().getColumn(4).setMinWidth(70);		
-		
+
 		scrollPane.setViewportView(table);
 
 		table.addMouseListener(new MouseListener() {
@@ -234,7 +234,7 @@ public class TestApproved extends JDialog {
 				JTable target = (JTable) arg0.getSource();
 				if (arg0.getClickCount() == 1) {
 					try {
-						
+
 						int row=table.getSelectedRow();
 						pid=table.getValueAt(row, 1).toString();
 						examid=table.getValueAt(row, 0).toString();
@@ -396,7 +396,7 @@ public class TestApproved extends JDialog {
 					} catch (Exception e) {
 						// TODO: handle exception
 					}
-					
+
 
 				}
 			}
@@ -408,7 +408,7 @@ public class TestApproved extends JDialog {
 			public void valueChanged(ListSelectionEvent arg0) {
 				try {
 					if (!arg0.getValueIsAdjusting()) {
-					
+
 						if (isWindows()) {
 							OPenFileWindows("localTemp/"
 									+ list.getSelectedValue().toString() + "");
@@ -425,7 +425,7 @@ public class TestApproved extends JDialog {
 							Run(new String[] { "/bin/bash", "-c",
 									open[2] + " localTemp/" + list.getSelectedValue().toString() });
 						}
-						
+
 					}
 				} catch (Exception e) {
 					// TODO: handle exception
@@ -457,16 +457,13 @@ public class TestApproved extends JDialog {
 	public void searchTableContents(String searchString) {
 		DefaultTableModel currtableModel = (DefaultTableModel) table.getModel();
 		if(currtableModel.getRowCount()>0 )
-			// To empty the table before search
 		{
 			currtableModel.setRowCount(0);
-			// To search for contents from original table content
 			for (Object rows : originalTableModel) {
 				Vector rowVector = (Vector) rows;
 				for (Object column : rowVector) {
 					if (column.toString().toLowerCase()
 							.contains(searchString.toLowerCase())) {
-						// content found so adding to table
 						currtableModel.addRow(rowVector);
 						break;
 					}
@@ -574,10 +571,10 @@ public class TestApproved extends JDialog {
 
 		return mainDir + "/HMS/Patient/" + pid + "/Exam/" + exam_id + "/";
 	}
-	
 
 
-	
+
+
 	public void LocalCopy(String path, String index)
 			throws MalformedURLException, SmbException {
 		System.out.println(path);
@@ -615,7 +612,7 @@ public class TestApproved extends JDialog {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void Run(String[] cmd) {
 		try {
 			Process process = Runtime.getRuntime().exec(cmd);
@@ -659,7 +656,7 @@ public class TestApproved extends JDialog {
 		is.close();
 
 	}
-	
+
 	public static boolean deleteLocalTemp(File directory) {
 
 		if (directory.exists()) {
@@ -734,24 +731,24 @@ public class TestApproved extends JDialog {
 		list.setListData(files);
 	}
 	public class CustomRenderer extends DefaultTableCellRenderer 
-	  {
-	      public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
-	      {
-	          Component cellComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+	{
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
+		{
+			Component cellComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-	          if(table.getValueAt(row, column)!=null)
-	          {
-	        	  if(table.getValueAt(row, column).equals("Yes")){
-		              cellComponent.setBackground(Color.GREEN);
-		          } else{
-		        	  cellComponent.setBackground(Color.WHITE);
-		        	 
-		          }
-	          }
-	         
-	          return cellComponent;
-	      }
-	  }
+			if(table.getValueAt(row, column)!=null)
+			{
+				if(table.getValueAt(row, column).equals("Yes")){
+					cellComponent.setBackground(Color.GREEN);
+				} else{
+					cellComponent.setBackground(Color.WHITE);
+
+				}
+			}
+
+			return cellComponent;
+		}
+	}
 	private void get() {
 		// TODO Auto-generated method stub
 		table.setAutoCreateRowSorter(true);

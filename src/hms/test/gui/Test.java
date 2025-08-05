@@ -1882,7 +1882,6 @@ public class Test extends JFrame {
 			open[0] = data[2];
 			open[1] = data[3];
 			open[2] = data[4];
-			// Always close files.
 			bufferedReader.close();
 		} catch (FileNotFoundException ex) {
 			System.out.println("Unable to open file '" + fileName + "'");
