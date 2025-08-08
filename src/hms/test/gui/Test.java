@@ -211,7 +211,7 @@ public class Test extends JFrame {
 	private JPanel panel_4;
 
 	public static void main(String[] args) {
-		new Test("test").setVisible(true);;
+		new Test("riya").setVisible(true);;
 	}
 	@SuppressWarnings("unchecked")
 	/**
@@ -229,8 +229,6 @@ public class Test extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-
-
 
 
 		JPanel panel_3 = new JPanel();
@@ -1514,6 +1512,18 @@ public class Test extends JFrame {
 		});
 		mnStore.add(mntmNewEntry);
 		mnStore.add(mntmMyStock);
+		
+		JMenuItem allreport = new JMenuItem("Approve Reports");
+		allreport.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+
+				TestApproved frame = new TestApproved(exam_room);
+				frame.setModal(true);
+				frame.setVisible(true);
+			}
+		});
+		menuBar.add(allreport);
+		
 		KeyboardFocusManager.getCurrentKeyboardFocusManager()
 		.addPropertyChangeListener("permanentFocusOwner",
 				new PropertyChangeListener() {
