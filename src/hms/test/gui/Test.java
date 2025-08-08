@@ -705,7 +705,6 @@ public class Test extends JFrame {
 					p_id = patientIDCB.getSelectedItem().toString();
 				} catch (Exception e) {
 					// TODO: handle exception
-
 				}
 				exam_doctorname = "";
 				patientNameTB.setText("");
@@ -729,14 +728,6 @@ public class Test extends JFrame {
 				XrayfilesPath.clear();
 				list.removeAll();
 				list.setListData(files);
-				try {
-					loadDataToTable("0");
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				// System.out.println(p_id + "    "
-				// + patientIDCB.getSelectedIndex());
 				setPatientDetail(p_id);
 				if (patientID.getSize() > 0) {
 					patientNameTB.setText(p_name);
@@ -1668,11 +1659,12 @@ public class Test extends JFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		patientDBConnection.closeConnection();
+
 		examdbConnection = new ExamDBConnection();
 		String lastOPDDate = examdbConnection.retrieveLastExamPatient(indexId);
 		lastOPDDateLB.setText("Last Exam : " + lastOPDDate);
 		examdbConnection.closeConnection();
-		patientDBConnection.closeConnection();
 		String data[] = new String[22];
 		int i = 0;
 		for (String retval : p_age.split("-")) {
@@ -1763,10 +1755,8 @@ public class Test extends JFrame {
 		// System.out.println("Table: " + rs.getMetaData().getTableName(1));
 		int NumberOfColumns = 0, NumberOfRows = 0;
 		NumberOfColumns = rs.getMetaData().getColumnCount();
-		while (rs.next()) {
-			NumberOfRows++;
-		}
-
+		rs.last();
+		NumberOfRows=rs.getRow();
 		rs.beforeFirst();
 		Object Rows_Object_Array[][];
 		Rows_Object_Array = new Object[NumberOfRows][NumberOfColumns - 1];
@@ -1786,6 +1776,7 @@ public class Test extends JFrame {
 			R++;
 
 		}
+		db.closeConnection();
 		addTestTable_1.setModel(new DefaultTableModel(Rows_Object_Array,
 				new String[] { "Exam No", "Exam Name", "Date", "Charges" }) {
 			boolean[] canEdit = new boolean[] { false, false, false };

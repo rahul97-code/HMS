@@ -290,10 +290,7 @@ public class AllExamsDetail extends JDialog {
 							.getValueAt(selectedRowIndex, 0);
 					
 					String opdType_id = selectedObject1.toString();
-					btnNewButton_dlt.setEnabled(false);
-					//System.out.print(opdType_id+"ddddddddddddddddddd"+tableNameSTR);
-				
-					
+					btnNewButton_dlt.setEnabled(false);		
 				ExamDBConnection db = new ExamDBConnection();
 				try {
 					db.deleteRowExams(opdType_id,tableNameSTR);
