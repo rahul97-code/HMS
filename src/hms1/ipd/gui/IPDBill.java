@@ -7,6 +7,7 @@ import hms.patient.database.PatientDBConnection;
 import hms.patient.database.PaymentDBConnection;
 import hms.patient.slippdf.AdvancePaymentSlippdf;
 import hms.patient.slippdf.IPDBillSlippdf;
+import hms.patient.slippdf.ProvisionalIPDBillSlippdf;
 import hms.payments.PaymentMain;
 import hms.reception.gui.ReceptionMain;
 import hms.store.database.ProceduresDBConnection;
@@ -705,7 +706,6 @@ public class IPDBill extends JDialog {
 
 						dispose();
 						try {
-							if(p_insurancetype.equals("Unknown") || ReceptionMain.insBillAccess) 
 								new IPDBillSlippdf(bill_no, ipd_id, ipdDoctorTB
 										.getText(),true);
 						} catch (DocumentException | IOException e) {
@@ -1167,18 +1167,8 @@ public class IPDBill extends JDialog {
 		btnProvisionalBill.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-
-				if(!p_insurancetype.equals("Unknown") && !ReceptionMain.insBillAccess) {
-					JOptionPane.showMessageDialog(
-							null,
-							"You don’t have access to view this.",
-							"Access Denied",
-							JOptionPane.WARNING_MESSAGE
-							);
-					return;
-				}
 				try {
-					new IPDBillSlippdf("Provisional Bill", ipd_id, ipdDoctorTB.getText(),false);
+					new ProvisionalIPDBillSlippdf("Provisional Bill", ipd_id, ipdDoctorTB.getText(),false);
 				} catch (DocumentException | IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

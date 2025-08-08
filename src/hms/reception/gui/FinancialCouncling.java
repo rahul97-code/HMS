@@ -187,12 +187,7 @@ public class FinancialCouncling extends JDialog {
             }
         });
         getContentPane().add(btnBill);
-        
-        if(ReceptionMain.insBillAccess) {
-        	btnBill.setEnabled(true);
-        }else {
-        	btnBill.setEnabled(false);
-        }
+       
 
         JLabel lblSearchTab = new JLabel("Search :");
         lblSearchTab.setBounds(620, 253, 70, 15);
