@@ -59,5 +59,6 @@
 	<classpathentry kind="lib" path="lib/slf4j-simple-1.7.36.jar"/>
 	<classpathentry kind="lib" path="lib/bridj-0.7.0.jar"/>
 	<classpathentry kind="lib" path="lib/bridj-0.7.0-unix-only.jar"/>
+	<classpathentry kind="lib" path="lib/poi-3.17.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

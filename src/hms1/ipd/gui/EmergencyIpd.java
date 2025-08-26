@@ -21,6 +21,9 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -43,6 +46,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -70,6 +74,9 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import com.itextpdf.text.DocumentException;
+import javax.swing.*;
+import javax.swing.text.*;
+import java.awt.*;
 
 public class EmergencyIpd extends JDialog {
 
@@ -839,7 +846,11 @@ public class EmergencyIpd extends JDialog {
 //										.toString());
 //						finalAdvance = Math.round(t * 100.0) / 100.0;
 //					}
-
+					String getAyushmanRegistrationNumber = null;
+					if (p_insurancetype.equalsIgnoreCase("Ayushman") || p_insurancetype.equalsIgnoreCase("Ayushman Bharat")) {
+					 getAyushmanRegistrationNumber =getAyushmanRegistrationNumber();
+				    System.out.println(getAyushmanRegistrationNumber+" number");
+					}
 					long timeInMillis = System.currentTimeMillis();
 					Calendar cal1 = Calendar.getInstance();
 					cal1.setTimeInMillis(timeInMillis);
@@ -917,6 +928,10 @@ public class EmergencyIpd extends JDialog {
 					} catch (Exception e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
+					}
+					
+					if (getAyushmanRegistrationNumber != null) {
+					    ipddbConnection.updateAyushmanRegistrationNumber(getAyushmanRegistrationNumber, insertedID);
 					}
 					ipddbConnection.closeConnection();
 					WardsManagementDBConnection dbConnection = new WardsManagementDBConnection();
@@ -1528,6 +1543,94 @@ public class EmergencyIpd extends JDialog {
 			bedNoCB.setSelectedIndex(0);
 		}
 	}
+	
+	
+
+	public String getAyushmanRegistrationNumber() {
+	    JTextField regNumField = new JTextField(15);
+	    JTextField confirmRegNumField = new JTextField(15);
+
+	    // Apply digit-only filter to both fields
+	    setDigitOnlyFilter(regNumField);
+	    setDigitOnlyFilter(confirmRegNumField);
+
+	    JLabel errorLabel = new JLabel(" ");
+	    errorLabel.setForeground(Color.RED);
+	    errorLabel.setFont(new Font("Arial", Font.BOLD, 12));
+
+	    // Panel for input fields
+	    JPanel inputPanel = new JPanel(new GridBagLayout());
+	    inputPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // padding
+
+	    GridBagConstraints gbc = new GridBagConstraints();
+	    gbc.insets = new Insets(5, 5, 5, 5);
+	    gbc.anchor = GridBagConstraints.WEST;
+
+	    gbc.gridx = 0;
+	    gbc.gridy = 0;
+	    inputPanel.add(new JLabel("Enter Registration Number:"), gbc);
+
+	    gbc.gridx = 1;
+	    inputPanel.add(regNumField, gbc);
+
+	    gbc.gridx = 0;
+	    gbc.gridy = 1;
+	    inputPanel.add(new JLabel("Confirm Registration Number:"), gbc);
+
+	    gbc.gridx = 1;
+	    inputPanel.add(confirmRegNumField, gbc);
+
+	    gbc.gridx = 0;
+	    gbc.gridy = 2;
+	    gbc.gridwidth = 2;
+	    gbc.anchor = GridBagConstraints.CENTER;
+	    inputPanel.add(errorLabel, gbc);
+
+	    while (true) {
+	        int result = JOptionPane.showConfirmDialog(
+	            null,
+	            inputPanel,
+	            "Ayushman Registration",
+	            JOptionPane.OK_CANCEL_OPTION,
+	            JOptionPane.PLAIN_MESSAGE
+	        );
+
+	        if (result == JOptionPane.CANCEL_OPTION || result == JOptionPane.CLOSED_OPTION) {
+	            return null;
+	        }
+
+	        String regNum = regNumField.getText().trim();
+	        String confirmRegNum = confirmRegNumField.getText().trim();
+
+	        if (regNum.isEmpty() || confirmRegNum.isEmpty()) {
+	            errorLabel.setText("❌ Fields cannot be empty!");
+	        } else if (!regNum.equals(confirmRegNum)) {
+	            errorLabel.setText("❌ Registration numbers do not match!");
+	        } else {
+	            return regNum;
+	        }
+	    }
+	}
+
+	// Helper method to apply digit-only filter to a JTextField
+	private void setDigitOnlyFilter(JTextField field) {
+	    ((AbstractDocument) field.getDocument()).setDocumentFilter(new DocumentFilter() {
+	        @Override
+	        public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
+	            if (string.matches("\\d+")) {
+	                super.insertString(fb, offset, string, attr);
+	            } // else ignore non-digit input
+	        }
+
+	        @Override
+	        public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
+	            if (text.matches("\\d+")) {
+	                super.replace(fb, offset, length, text, attrs);
+	            } // else ignore non-digit input
+	        }
+	    });
+	}
+
 
 	public void getWardDetail() {
 		wardInchargeLB.setText("");

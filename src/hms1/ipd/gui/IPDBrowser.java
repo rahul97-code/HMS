@@ -52,6 +52,7 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -66,6 +67,10 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
 
 import com.itextpdf.text.DocumentException;
 import com.sun.prism.paint.Stop;
@@ -180,31 +185,25 @@ public class IPDBrowser extends JDialog {
 			}
 
 			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				// TODO Auto-generated method stub
-				if (arg0.getClickCount() == 1) {
-					JTable target = (JTable) arg0.getSource();
-					int row = target.getSelectedRow();
-					int column = target.getSelectedColumn();
-					// do some action
+			public void mouseClicked(MouseEvent e) {
+			    JTable target = (JTable) e.getSource();
+			    int row = target.getSelectedRow();
+			    int column = target.getSelectedColumn();
 
-					Object selectedObject = ipdbrowserTable.getModel()
-							.getValueAt(row, 0);
-					ipdentry = ipdbrowserTable.getModel().getValueAt(row, 0)
-							.toString();
-					// System.out.println(selectedObject);
-					patientid = ipdbrowserTable.getModel().getValueAt(row, 1)
-							.toString();
-					patientname = ipdbrowserTable.getModel().getValueAt(row, 2)
-							.toString();
-					patientDOA = ipdbrowserTable.getModel().getValueAt(row, 6)
-							.toString();
-					System.out.println(ipdentry + " " + patientid + " "
-							+ patientname);
+			    // Single Click: Select row and read data
+			    if (e.getClickCount() == 1) {
+			        Object selectedObject = ipdbrowserTable.getModel().getValueAt(row, 0);
+			        ipdentry = ipdbrowserTable.getModel().getValueAt(row, 0).toString();
+			        patientid = ipdbrowserTable.getModel().getValueAt(row, 1).toString();
+			        patientname = ipdbrowserTable.getModel().getValueAt(row, 2).toString();
+			        patientDOA = ipdbrowserTable.getModel().getValueAt(row, 6).toString();
 
-				}
+			        System.out.println(ipdentry + " " + patientid + " " + patientname);
+			    }
 
+			   
 			}
+
 		});
 		JButton btnNewButton = new JButton("New IPD");
 		btnNewButton.addActionListener(new ActionListener() {
@@ -312,7 +311,7 @@ public class IPDBrowser extends JDialog {
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel.setVerticalAlignment(SwingConstants.TOP);
 		lblNewLabel.setIcon(new ImageIcon(IPDBrowser.class.getResource("/icons/ipdbed.gif")));
-		lblNewLabel.setBounds(10, 326, 158, 92);
+		lblNewLabel.setBounds(12, 341, 172, 66);
 		panel.add(lblNewLabel);
 
 		textField = new JTextField();
@@ -380,8 +379,86 @@ public class IPDBrowser extends JDialog {
 				}
 			}
 		});
-		btnPrintLabel.setBounds(41, 289, 117, 25);
+		btnPrintLabel.setBounds(10, 275, 172, 25);
 		panel.add(btnPrintLabel);
+		
+		JButton btnNewButton_2 = new JButton("Edit Ayushman Reg.");
+		btnNewButton_2.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        int row = ipdbrowserTable.getSelectedRow();
+
+		        if (row != -1) {
+		            int column = 8; // Ayushman Registration Number column
+		            Object oldValue = ipdbrowserTable.getValueAt(row, column);
+		            String ipdentry = ipdbrowserTable.getModel().getValueAt(row, 0).toString();
+
+		            // Create text field with digit-only filter
+		            JTextField inputField = new JTextField(15);
+		            inputField.setText(oldValue != null ? oldValue.toString() : "");
+		            setDigitOnlyFilter(inputField);
+
+		            JPanel panel = new JPanel(new BorderLayout());
+		            panel.add(new JLabel("Edit Ayushman Registration Number:"), BorderLayout.NORTH);
+		            panel.add(inputField, BorderLayout.CENTER);
+
+		            int result = JOptionPane.showConfirmDialog(
+		                null,
+		                panel,
+		                "Update Value",
+		                JOptionPane.OK_CANCEL_OPTION,
+		                JOptionPane.PLAIN_MESSAGE
+		            );
+
+		            if (result == JOptionPane.OK_OPTION) {
+		                String newValue = inputField.getText().trim();
+
+		                if (newValue.isEmpty()) {
+		                    JOptionPane.showMessageDialog(null, "Registration number cannot be empty!", "Input Error", JOptionPane.ERROR_MESSAGE);
+		                    return;
+		                }
+
+		                if (!newValue.equals(oldValue)) {
+		                    ipdbrowserTable.setValueAt(newValue, row, column); // update JTable
+
+		                    try {
+		                        IPDDBConnection ipddbConnection = new IPDDBConnection();
+		                        ipddbConnection.updateAyushmanRegistrationNumber(newValue, Integer.parseInt(ipdentry));
+
+		                        JOptionPane.showMessageDialog(null, "Updated successfully.");
+		                    } catch (Exception ex) {
+		                        JOptionPane.showMessageDialog(null, "Database update failed:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		                    }
+		                }
+		            }
+
+		        } else {
+		            JOptionPane.showMessageDialog(null, "Please select a row first.", "No Selection", JOptionPane.WARNING_MESSAGE);
+		        }
+		    }
+
+		    // Helper method to apply digit-only filter
+		    private void setDigitOnlyFilter(JTextField field) {
+		        ((AbstractDocument) field.getDocument()).setDocumentFilter(new DocumentFilter() {
+		            @Override
+		            public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
+		                if (string.matches("\\d+")) {
+		                    super.insertString(fb, offset, string, attr);
+		                }
+		            }
+
+		            @Override
+		            public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
+		                if (text.matches("\\d+")) {
+		                    super.replace(fb, offset, length, text, attrs);
+		                }
+		            }
+		        });
+		    }
+		});
+
+
+		btnNewButton_2.setBounds(10, 311, 172, 23);
+		panel.add(btnNewButton_2);
 		
 		
 
@@ -548,7 +625,7 @@ public class IPDBrowser extends JDialog {
 			// Finally load data to the table
 			DefaultTableModel model = new DefaultTableModel(Rows_Object_Array,
 					new String[] { "IPD No.", "Patient ID", "Patient Name",
-							"Insurance Type", "Ward Name", "Bed No.", "Admission Date", "Discharge Date"
+							"Insurance Type", "Ward Name", "Bed No.", "Admission Date", "Discharge Date", "Ayushman_Registration"
 			}) {
 				//				DefaultTableModel model = new DefaultTableModel(Rows_Object_Array,
 				//						new String[] { "IPD No.", "Patient ID", "Patient Name",
@@ -569,6 +646,8 @@ public class IPDBrowser extends JDialog {
 			ipdbrowserTable.getColumnModel().getColumn(4).setMinWidth(100);
 			ipdbrowserTable.getColumnModel().getColumn(5).setMinWidth(110);
 			ipdbrowserTable.getColumnModel().getColumn(6).setMinWidth(110);
+    		ipdbrowserTable.getColumnModel().getColumn(8).setMinWidth(140);
+
 			//			ipdbrowserTable.getColumnModel().getColumn(7).setMinWidth(170);
 			//			ipdbrowserTable.getColumnModel().getColumn(7)
 			//					.setCellRenderer(new JTableButtonRenderer());

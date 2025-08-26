@@ -142,7 +142,7 @@ public class TestApproved extends JDialog {
 			@Override
 			public void run() {
 				try {
-					TestApproved frame = new TestApproved("16");
+					TestApproved frame = new TestApproved("22");
 					frame.setVisible(true);
 					//					frame.dispose();
 				} catch (Exception e) {

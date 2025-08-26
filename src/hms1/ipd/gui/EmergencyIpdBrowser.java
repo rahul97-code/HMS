@@ -316,10 +316,10 @@ public class EmergencyIpdBrowser extends JDialog {
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel.setVerticalAlignment(SwingConstants.TOP);
 		lblNewLabel.setIcon(new ImageIcon(EmergencyIpdBrowser.class.getResource("/icons/ipdbed.gif")));
-		lblNewLabel.setBounds(9, 298, 158, 72);
+		lblNewLabel.setBounds(9, 298, 158, 63);
 		panel.add(lblNewLabel);
 		JButton btnReturnDiposite = new JButton("Convert to IPD");
-		btnReturnDiposite.setBounds(6, 372, 132, 35);
+		btnReturnDiposite.setBounds(19, 372, 148, 35);
 		panel.add(btnReturnDiposite);
 		btnReturnDiposite.addActionListener(new ActionListener() {
 			@Override
@@ -448,7 +448,7 @@ public class EmergencyIpdBrowser extends JDialog {
             }
             //Finally load data to the table
             DefaultTableModel model = new DefaultTableModel(Rows_Object_Array, new String[] {
-            		"IPD No.","Type", "Patient ID", "Patient Name","Insurance Type",  "Ward Name", "Bed No.","Date"
+            		"IPD No.","Type", "Patient ID", "Patient Name","Insurance Type",  "Ward Name", "Bed No.","Date","Ayushman Registration"
     			}) {
     			@Override
     			public boolean isCellEditable(int row, int column) {
@@ -463,6 +463,7 @@ public class EmergencyIpdBrowser extends JDialog {
     		ipdbrowserTable.getColumnModel().getColumn(4).setMinWidth(100);
     		ipdbrowserTable.getColumnModel().getColumn(5).setMinWidth(100);
     		ipdbrowserTable.getColumnModel().getColumn(6).setMinWidth(110);
+    		ipdbrowserTable.getColumnModel().getColumn(8).setMinWidth(140);
 //    		ipdbrowserTable.addMouseListener(new MouseListener() {
 //
 //    			@Override
