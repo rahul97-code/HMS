@@ -458,7 +458,7 @@ public class IPDDBConnection extends DBConnection {
 		return rs;
 	}
 	public ResultSet retrieveAllData(String dateFrom, String dateTo) { 
-		String query = "SELECT `ipd_id2`, `p_id`, I.`p_name`,`insurance_type`,`ipd_ward`, `ipd_bed_no`,`ipd_entry_date`,CASE WHEN `ipd_discharge_date` = '0000-00-00' THEN '' ELSE `ipd_discharge_date` END AS `ipd_discharge_date`, `Ayushman_Registration` FROM `ipd_entery` I  WHERE `ipd_entry_date` BETWEEN '"
+		String query = "SELECT `ipd_id2`, `p_id`, I.`p_name`,`insurance_type`,`ipd_ward`, `ipd_bed_no`,`ipd_entry_date`,CASE WHEN `ipd_discharge_date` = '0000-00-00' THEN '' ELSE `ipd_discharge_date` END AS `ipd_discharge_date`, COALESCE(`Ayushman_Registration`,'') FROM `ipd_entery` I  WHERE `ipd_entry_date` BETWEEN '"
 				+ dateFrom + "' AND '" + dateTo + "'  AND `ipd_discharged`!='CANCELLED' AND `emergency_opd` NOT IN('Emergency' ,'Procedure') ORDER BY `ipd_id` DESC";
 		System.out.println(query);
 		try {

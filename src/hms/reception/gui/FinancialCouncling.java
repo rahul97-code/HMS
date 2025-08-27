@@ -166,6 +166,7 @@ public class FinancialCouncling extends JDialog {
         tabbedPane.setSelectedIndex(0);
 
         JButton btnBill = new JButton("Provisional Bill");
+        btnBill.setEnabled(false);
         btnBill.setBounds(20, 605, 142, 25);
         btnBill.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -187,6 +188,7 @@ public class FinancialCouncling extends JDialog {
             }
         });
         getContentPane().add(btnBill);
+     
        
 
         JLabel lblSearchTab = new JLabel("Search :");
