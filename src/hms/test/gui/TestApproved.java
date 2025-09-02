@@ -35,6 +35,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -102,6 +103,7 @@ import javax.swing.border.LineBorder;
 import java.awt.Color;
 import javax.swing.border.BevelBorder;
 import javax.swing.JProgressBar;
+import javax.swing.JSlider;
 
 public class TestApproved extends JDialog {
 
@@ -132,6 +134,7 @@ public class TestApproved extends JDialog {
 	protected String pid;
 	private String[] open=new String[5];
 	protected String examid;
+	private JRadioButton rdbtnDrKartik;
 
 
 	/**
@@ -142,7 +145,7 @@ public class TestApproved extends JDialog {
 			@Override
 			public void run() {
 				try {
-					TestApproved frame = new TestApproved("16");
+					TestApproved frame = new TestApproved("22");
 					frame.setVisible(true);
 					//					frame.dispose();
 				} catch (Exception e) {
@@ -196,7 +199,7 @@ public class TestApproved extends JDialog {
 		table.getColumnModel().getColumn(3).setMinWidth(400);
 		table.getColumnModel().getColumn(4).setPreferredWidth(70);
 		table.getColumnModel().getColumn(4).setMinWidth(70);		
-		
+
 		scrollPane.setViewportView(table);
 
 		table.addMouseListener(new MouseListener() {
@@ -234,7 +237,7 @@ public class TestApproved extends JDialog {
 				JTable target = (JTable) arg0.getSource();
 				if (arg0.getClickCount() == 1) {
 					try {
-						
+
 						int row=table.getSelectedRow();
 						pid=table.getValueAt(row, 1).toString();
 						examid=table.getValueAt(row, 0).toString();
@@ -283,7 +286,7 @@ public class TestApproved extends JDialog {
 		panel.setLayout(null);
 
 		JDateChooser dateFromDC_1 = new JDateChooser();
-		dateFromDC_1.setBounds(38, 85, 178, 27);
+		dateFromDC_1.setBounds(13, 65, 143, 27);
 		panel.add(dateFromDC_1);
 		dateFromDC_1.getDateEditor().addPropertyChangeListener(
 				new PropertyChangeListener() {
@@ -302,7 +305,7 @@ public class TestApproved extends JDialog {
 		dateFromDC_1.setMaxSelectableDate(new Date());
 		dateFromDC_1.setDateFormatString("yyyy-MM-dd");
 		dateToDC = new JDateChooser();
-		dateToDC.setBounds(228, 85, 178, 27);
+		dateToDC.setBounds(167, 65, 143, 27);
 		panel.add(dateToDC);
 		dateToDC.getDateEditor().addPropertyChangeListener(
 				new PropertyChangeListener() {
@@ -322,12 +325,12 @@ public class TestApproved extends JDialog {
 		dateToDC.setDateFormatString("yyyy-MM-dd");
 
 		JLabel lblDateTo = new JLabel("DATE : TO");
-		lblDateTo.setBounds(276, 59, 73, 14);
+		lblDateTo.setBounds(191, 39, 73, 14);
 		panel.add(lblDateTo);
 		lblDateTo.setFont(new Font("Tahoma", Font.PLAIN, 12));
 
 		JLabel lblDateFrom = new JLabel("DATE : From");
-		lblDateFrom.setBounds(85, 59, 82, 14);
+		lblDateFrom.setBounds(36, 39, 82, 14);
 		panel.add(lblDateFrom);
 		lblDateFrom.setFont(new Font("Tahoma", Font.PLAIN, 12));
 
@@ -340,13 +343,13 @@ public class TestApproved extends JDialog {
 
 		JLabel lblNewLabel_2 = new JLabel("");
 		lblNewLabel_2.setBorder(new LineBorder(UIManager.getColor("Button.select")));
-		lblNewLabel_2.setBounds(218, 29, 747, 2);
+		lblNewLabel_2.setBounds(218, 19, 747, 2);
 		panel.add(lblNewLabel_2);
 
 		JLabel lblNewLabel_3 = new JLabel("RIS System");
 		lblNewLabel_3.setForeground(UIManager.getColor("CheckBoxMenuItem.acceleratorForeground"));
 		lblNewLabel_3.setFont(new Font("Dialog", Font.ITALIC, 16));
-		lblNewLabel_3.setBounds(40, 16, 183, 31);
+		lblNewLabel_3.setBounds(40, 6, 183, 31);
 		panel.add(lblNewLabel_3);
 
 		btnNewButton_2 = new JButton("Search");
@@ -356,11 +359,11 @@ public class TestApproved extends JDialog {
 
 			}
 		});
-		btnNewButton_2.setBounds(418, 86, 88, 25);
+		btnNewButton_2.setBounds(324, 66, 88, 25);
 		panel.add(btnNewButton_2);
 
 		JPanel panel_1 = new JPanel();
-		panel_1.setBounds(552, 43, 303, 82);
+		panel_1.setBounds(441, 34, 303, 82);
 		panel.add(panel_1);
 		panel_1.setLayout(null);
 		panel_1.setBorder(new TitledBorder(null, "Files", TitledBorder.LEADING,
@@ -386,7 +389,94 @@ public class TestApproved extends JDialog {
 			public Object getElementAt(int index) {
 				return values[index];
 			}
+		})
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		;
+
+		JButton btnNewButton = new JButton("");
+		btnNewButton.addActionListener(new ActionListener() {public void actionPerformed(ActionEvent e) {
+		    if (list.getSelectedValue() == null) {
+		        JOptionPane.showMessageDialog(null, "Select File First!");
+		        return;
+		    }
+
+		    String inputFile = "localTemp/" + list.getSelectedValue().toString();
+		    String sigImagePath = "";
+
+		    if (rdbtnDrKartik.isSelected()) {
+		        sigImagePath = "/icons/kartik_sig.png";
+		    } else {
+		        sigImagePath = "/icons/jasmine_sig.png";
+		    }
+
+		    File file = new File(inputFile);
+
+		    // ✅ Use class loader to check if signature image exists in classpath
+		    InputStream sigStream = getClass().getResourceAsStream(sigImagePath);
+		    if (sigStream == null) {
+		        JOptionPane.showMessageDialog(null, "Signature file not found in resources: " + sigImagePath);
+		        return;
+		    }
+
+		    if (file.exists() && file.isFile() && file.getName().toLowerCase().endsWith(".docx")) {
+		        // Pass the InputStream or convert to temp file if needed
+		        new DoSignatureOnDocx(inputFile, inputFile, sigImagePath);
+		    } else {
+		        JOptionPane.showMessageDialog(null, "The selected file is not a .docx file.");
+		    }
+		}
+});
+		btnNewButton.setIcon(new ImageIcon(TestApproved.class.getResource("/icons/paint.gif")));
+		btnNewButton.setBounds(763, 41, 88, 42);
+		panel.add(btnNewButton);
+
+		rdbtnDrKartik = new JRadioButton("Dr. Kartik");
+		rdbtnDrKartik .setSelected(true);
+		rdbtnDrKartik.setFont(new Font("Dialog", Font.ITALIC, 12));
+		rdbtnDrKartik.setBounds(23, 103, 93, 23);
+		panel.add(rdbtnDrKartik);
+
+		JRadioButton rdbtnDrJasmine = new JRadioButton("Dr. Jasmine Kaur");
+		rdbtnDrJasmine.setFont(new Font("Dialog", Font.ITALIC, 12));
+		rdbtnDrJasmine.setBounds(125, 103, 149, 23);
+		panel.add(rdbtnDrJasmine);
+
+		ButtonGroup group = new ButtonGroup();
+		group.add(rdbtnDrKartik);
+		group.add(rdbtnDrJasmine);
+
+		JButton btnNewButton_1 = new JButton("Save");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(list.getSelectedValue()==null) {
+					JOptionPane.showMessageDialog(null, "Select File First!");
+					return;
+				}
+				String fileName=list.getSelectedValue().toString();
+				String inputFile="localTemp/"+ fileName + "";		
+				new Thread(new SmbUtils.SmbUploaderTask(inputFile, getDirectory(pid,examid)+"/"+fileName)).start();		
+			}
 		});
+		btnNewButton_1.setBounds(763, 92, 88, 27);
+		panel.add(btnNewButton_1);
+
 		list.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent event) {
 				if (!event.getValueIsAdjusting()) {
@@ -396,43 +486,40 @@ public class TestApproved extends JDialog {
 					} catch (Exception e) {
 						// TODO: handle exception
 					}
-					
+
 
 				}
 			}
 		});
 
-		list.addListSelectionListener(new ListSelectionListener() {
-
+		list.addMouseListener(new MouseAdapter() {
 			@Override
-			public void valueChanged(ListSelectionEvent arg0) {
-				try {
-					if (!arg0.getValueIsAdjusting()) {
-					
-						if (isWindows()) {
-							OPenFileWindows("localTemp/"
-									+ list.getSelectedValue().toString() + "");
-						}else if (isUnix()) {
-
-							if (System.getProperty("os.version").equals("3.11.0-12-generic")) {
-								Run(new String[] { "/bin/bash", "-c",
-										open[0] + " localTemp/" + list.getSelectedValue().toString() });
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2) { // Double-click detected
+					int index = list.locationToIndex(e.getPoint()); // get index of clicked item
+					if (index >= 0) {
+						String selectedValue = list.getModel().getElementAt(index).toString();
+						try {
+							if (isWindows()) {
+								OPenFileWindows("localTemp/" + selectedValue);
+							} else if (isUnix()) {
+								if (System.getProperty("os.version").equals("3.11.0-12-generic")) {
+									Run(new String[] { "/bin/bash", "-c", open[0] + " localTemp/" + selectedValue });
+								} else {
+									Run(new String[] { "/bin/bash", "-c", open[1] + " localTemp/" + selectedValue });
+								}
 							} else {
-								Run(new String[] { "/bin/bash", "-c",
-										open[1] + " localTemp/" + list.getSelectedValue().toString() });
+								Run(new String[] { "/bin/bash", "-c", open[2] + " localTemp/" + selectedValue });
 							}
-						} else {
-							Run(new String[] { "/bin/bash", "-c",
-									open[2] + " localTemp/" + list.getSelectedValue().toString() });
+						} catch (Exception ex) {
+							ex.printStackTrace();
+							JOptionPane.showMessageDialog(null, "Error opening file: " + ex.getMessage());
 						}
-						
 					}
-				} catch (Exception e) {
-					// TODO: handle exception
 				}
 			}
-
 		});
+
 
 		timer = new Timer(1, new ActionListener() {
 
@@ -571,13 +658,12 @@ public class TestApproved extends JDialog {
 	}
 
 	public String getDirectory(String pid, String exam_id) {
-
 		return mainDir + "/HMS/Patient/" + pid + "/Exam/" + exam_id + "/";
 	}
-	
 
 
-	
+
+
 	public void LocalCopy(String path, String index)
 			throws MalformedURLException, SmbException {
 		System.out.println(path);
@@ -615,7 +701,7 @@ public class TestApproved extends JDialog {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void Run(String[] cmd) {
 		try {
 			Process process = Runtime.getRuntime().exec(cmd);
@@ -659,7 +745,7 @@ public class TestApproved extends JDialog {
 		is.close();
 
 	}
-	
+
 	public static boolean deleteLocalTemp(File directory) {
 
 		if (directory.exists()) {
@@ -734,24 +820,24 @@ public class TestApproved extends JDialog {
 		list.setListData(files);
 	}
 	public class CustomRenderer extends DefaultTableCellRenderer 
-	  {
-	      public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
-	      {
-	          Component cellComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+	{
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
+		{
+			Component cellComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-	          if(table.getValueAt(row, column)!=null)
-	          {
-	        	  if(table.getValueAt(row, column).equals("Yes")){
-		              cellComponent.setBackground(Color.GREEN);
-		          } else{
-		        	  cellComponent.setBackground(Color.WHITE);
-		        	 
-		          }
-	          }
-	         
-	          return cellComponent;
-	      }
-	  }
+			if(table.getValueAt(row, column)!=null)
+			{
+				if(table.getValueAt(row, column).equals("Yes")){
+					cellComponent.setBackground(Color.GREEN);
+				} else{
+					cellComponent.setBackground(Color.WHITE);
+
+				}
+			}
+
+			return cellComponent;
+		}
+	}
 	private void get() {
 		// TODO Auto-generated method stub
 		table.setAutoCreateRowSorter(true);

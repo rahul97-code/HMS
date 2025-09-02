@@ -458,7 +458,7 @@ public class IPDDBConnection extends DBConnection {
 		return rs;
 	}
 	public ResultSet retrieveAllData(String dateFrom, String dateTo) { 
-		String query = "SELECT `ipd_id2`, `p_id`, I.`p_name`,`insurance_type`,`ipd_ward`, `ipd_bed_no`,`ipd_entry_date`,CASE WHEN `ipd_discharge_date` = '0000-00-00' THEN '' ELSE `ipd_discharge_date` END AS `ipd_discharge_date` FROM `ipd_entery` I  WHERE `ipd_entry_date` BETWEEN '"
+		String query = "SELECT `ipd_id2`, `p_id`, I.`p_name`,`insurance_type`,`ipd_ward`, `ipd_bed_no`,`ipd_entry_date`,CASE WHEN `ipd_discharge_date` = '0000-00-00' THEN '' ELSE `ipd_discharge_date` END AS `ipd_discharge_date`, COALESCE(`ayushman_registration`,'') FROM `ipd_entery` I  WHERE `ipd_entry_date` BETWEEN '"
 				+ dateFrom + "' AND '" + dateTo + "'  AND `ipd_discharged`!='CANCELLED' AND `emergency_opd` NOT IN('Emergency' ,'Procedure') ORDER BY `ipd_id` DESC";
 		System.out.println(query);
 		try {
@@ -471,7 +471,7 @@ public class IPDDBConnection extends DBConnection {
 		return rs;
 	}
 	public ResultSet retrieveAllDataEmergency(String dateFrom, String dateTo) { 
-		String query = "SELECT `ipd_id2`,`emergency_opd`, `p_id`, I.`p_name`,`p_insurancetype`,`ipd_ward`, `ipd_bed_no`,`ipd_entry_date` FROM `ipd_entery` I LEFT JOIN `patient_detail` P ON `pid1`=`p_id` WHERE `ipd_entry_date` BETWEEN '"
+		String query = "SELECT `ipd_id2`,`emergency_opd`, `p_id`, I.`p_name`,`p_insurancetype`,`ipd_ward`, `ipd_bed_no`,`ipd_entry_date`, `ayushman_registration` FROM `ipd_entery` I LEFT JOIN `patient_detail` P ON `pid1`=`p_id` WHERE `ipd_entry_date` BETWEEN '"
 				+ dateFrom + "' AND '" + dateTo + "'  AND `ipd_discharged`!='CANCELLED' AND `emergency_opd`='Emergency' ORDER BY `ipd_id` DESC";
 
 		try {
@@ -484,7 +484,7 @@ public class IPDDBConnection extends DBConnection {
 		return rs;
 	}
 	public ResultSet retrieveAllDataProcedure(String dateFrom, String dateTo) { 
-		String query = "SELECT `ipd_id2`,`emergency_opd`, `p_id`, I.`p_name`,`p_insurancetype`,`ipd_ward`, `ipd_bed_no`,`ipd_entry_date` FROM `ipd_entery` I LEFT JOIN `patient_detail` P ON `pid1`=`p_id` WHERE `ipd_entry_date` BETWEEN '"
+		String query = "SELECT `ipd_id2`,`emergency_opd`, `p_id`, I.`p_name`,`p_insurancetype`,`ipd_ward`, `ipd_bed_no`,`ipd_entry_date`, `ayushman_registration` FROM `ipd_entery` I LEFT JOIN `patient_detail` P ON `pid1`=`p_id` WHERE `ipd_entry_date` BETWEEN '"
 				+ dateFrom + "' AND '" + dateTo + "'  AND `ipd_discharged`!='CANCELLED' AND `emergency_opd`='Procedure' ORDER BY `ipd_id` DESC";
 
 		try {
@@ -497,7 +497,7 @@ public class IPDDBConnection extends DBConnection {
 		return rs;
 	}
 	public ResultSet retrieveAllDataDialysis(String dateFrom, String dateTo) { 
-		String query = "SELECT `ipd_id2`,`emergency_opd`, `p_id`, I.`p_name`,`p_insurancetype`,`ipd_ward`, `ipd_bed_no`,`ipd_entry_date` FROM `ipd_entery` I LEFT JOIN `patient_detail` P ON `pid1`=`p_id` WHERE `ipd_entry_date` BETWEEN '"
+		String query = "SELECT `ipd_id2`,`emergency_opd`, `p_id`, I.`p_name`,`p_insurancetype`,`ipd_ward`, `ipd_bed_no`,`ipd_entry_date`, `ayushman_registration` FROM `ipd_entery` I LEFT JOIN `patient_detail` P ON `pid1`=`p_id` WHERE `ipd_entry_date` BETWEEN '"
 				+ dateFrom + "' AND '" + dateTo + "'  AND `ipd_discharged`!='CANCELLED' AND `emergency_opd`='Dialysis' ORDER BY `ipd_id` DESC";
 
 		try {
@@ -663,6 +663,17 @@ public class IPDDBConnection extends DBConnection {
 					javax.swing.JOptionPane.ERROR_MESSAGE);
 		}
 		return rs;
+	}
+	
+	public void updateAyushmanRegistrationNumber(String registration, int index_id)
+	{
+		String query="update ipd_entery set ayushman_registration='"+registration+"' where ipd_id ='"+index_id+"'";
+		try {
+			statement.executeUpdate(query);
+		} catch (SQLException sqle) {
+			JOptionPane.showMessageDialog(null, sqle.getMessage(), "ERROR",
+					javax.swing.JOptionPane.ERROR_MESSAGE);
+		} 
 	}
 
 	public ResultSet retrieveAllDataDoctorIPDAdvance(String dateFrom, String dateTo,String doctorName,String insurance) { 

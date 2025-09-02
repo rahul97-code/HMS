@@ -5,6 +5,7 @@ import hms.main.NumberToWordConverter;
 import hms.patient.database.PatientDBConnection;
 import hms.patient.slippdf.AdvancePaymentSlippdf;
 import hms.patient.slippdf.IPDBillSlippdf;
+import hms.patient.slippdf.ProvisionalIPDBillSlippdf;
 import hms.reception.gui.ReceptionMain;
 import hms1.expenses.database.IPDExpensesDBConnection;
 import hms1.ipd.database.IPDDBConnection;
@@ -468,12 +469,34 @@ public class IPDBillHistory extends JDialog {
 			public void actionPerformed(ActionEvent arg0) {
 
 				if (!generated.equals("No")) {
-						try {
-							new IPDBillSlippdf(bill_no,ipd_id, ipdDoctorTB.getText(),false);
-						} catch (DocumentException | IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+					if(!p_insurancetype.equals("Unknown")) {
+						if(ReceptionMain.insBillAccess) {
+							try {
+								new IPDBillSlippdf(bill_no, ipd_id, ipdDoctorTB
+										.getText(),true);
+							} catch (DocumentException | IOException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+						}else
+						{
+							try {
+								new ProvisionalIPDBillSlippdf(bill_no, ipd_id, ipdDoctorTB
+										.getText(),true);
+							} catch (DocumentException | IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 						}
+					}else {
+						try {
+							new IPDBillSlippdf(bill_no, ipd_id, ipdDoctorTB
+									.getText(),true);
+						} catch (DocumentException | IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
 			} else {
 					JOptionPane.showMessageDialog(null,
 							"This bill is not generated yet",

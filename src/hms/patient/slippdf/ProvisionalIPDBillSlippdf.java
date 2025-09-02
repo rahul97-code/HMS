@@ -86,7 +86,7 @@ private String DischargeUser;
 
 	public static void main(String[] argh) {
 		try {
-			new ProvisionalIPDBillSlippdf("Provisional Bill","55288", "sdfsdf",false);
+			new ProvisionalIPDBillSlippdf("55288","55288", "sdfsdf",true);
 		} catch (DocumentException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
