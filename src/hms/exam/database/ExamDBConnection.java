@@ -418,7 +418,7 @@ public class ExamDBConnection extends DBConnection {
 	}
 
 	public ResultSet retrievePerformedExamData(String dateFrom, String dateTo, String room) {
-		String query = "select exam_id,exam_pid, exam_pname,exam_name, ee.exam_performed  from 	exam_entery ee WHERE\r\n"
+		String query = "select exam_id,exam_pid, exam_pname,exam_name, ee.exam_performed,`exam_approved`  from 	exam_entery ee WHERE\r\n"
 				+ "	ee.`exam_date` BETWEEN '"+dateFrom+"' AND '"+dateTo+"'\r\n"
 				+ "	and ee.exam_performed <> 'Cancel'\r\n"
 				+ "	and ee.exam_room = '"+room+"' order by ee.receipt_id";

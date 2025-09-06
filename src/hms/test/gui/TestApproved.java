@@ -49,6 +49,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Vector;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -76,6 +79,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
@@ -390,59 +394,59 @@ public class TestApproved extends JDialog {
 				return values[index];
 			}
 		})
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		;
 
 		JButton btnNewButton = new JButton("");
 		btnNewButton.addActionListener(new ActionListener() {public void actionPerformed(ActionEvent e) {
-		    if (list.getSelectedValue() == null) {
-		        JOptionPane.showMessageDialog(null, "Select File First!");
-		        return;
-		    }
+			if (list.getSelectedValue() == null) {
+				JOptionPane.showMessageDialog(null, "Select File First!");
+				return;
+			}
 
-		    String inputFile = "localTemp/" + list.getSelectedValue().toString();
-		    String sigImagePath = "";
+			String inputFile = "localTemp/" + list.getSelectedValue().toString();
+			String sigImagePath = "";
 
-		    if (rdbtnDrKartik.isSelected()) {
-		        sigImagePath = "/icons/kartik_sig.png";
-		    } else {
-		        sigImagePath = "/icons/jasmine_sig.png";
-		    }
+			if (rdbtnDrKartik.isSelected()) {
+				sigImagePath = "/icons/kartik_sig.png";
+			} else {
+				sigImagePath = "/icons/jasmine_sig.png";
+			}
 
-		    File file = new File(inputFile);
+			File file = new File(inputFile);
 
-		    // ✅ Use class loader to check if signature image exists in classpath
-		    InputStream sigStream = getClass().getResourceAsStream(sigImagePath);
-		    if (sigStream == null) {
-		        JOptionPane.showMessageDialog(null, "Signature file not found in resources: " + sigImagePath);
-		        return;
-		    }
+			// ✅ Use class loader to check if signature image exists in classpath
+			InputStream sigStream = getClass().getResourceAsStream(sigImagePath);
+			if (sigStream == null) {
+				JOptionPane.showMessageDialog(null, "Signature file not found in resources: " + sigImagePath);
+				return;
+			}
 
-		    if (file.exists() && file.isFile() && file.getName().toLowerCase().endsWith(".docx")) {
-		        // Pass the InputStream or convert to temp file if needed
-		        new DoSignatureOnDocx(inputFile, inputFile, sigImagePath);
-		    } else {
-		        JOptionPane.showMessageDialog(null, "The selected file is not a .docx file.");
-		    }
+			if (file.exists() && file.isFile() && file.getName().toLowerCase().endsWith(".docx")) {
+				// Pass the InputStream or convert to temp file if needed
+				new DoSignatureOnDocx(inputFile, inputFile, sigImagePath);
+			} else {
+				JOptionPane.showMessageDialog(null, "The selected file is not a .docx file.");
+			}
 		}
-});
+		});
 		btnNewButton.setIcon(new ImageIcon(TestApproved.class.getResource("/icons/paint.gif")));
 		btnNewButton.setBounds(763, 41, 88, 42);
 		panel.add(btnNewButton);
@@ -465,13 +469,55 @@ public class TestApproved extends JDialog {
 		JButton btnNewButton_1 = new JButton("Save");
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(list.getSelectedValue()==null) {
+				if (list.getSelectedValue() == null) {
 					JOptionPane.showMessageDialog(null, "Select File First!");
 					return;
 				}
-				String fileName=list.getSelectedValue().toString();
-				String inputFile="localTemp/"+ fileName + "";		
-				new Thread(new SmbUtils.SmbUploaderTask(inputFile, getDirectory(pid,examid)+"/"+fileName)).start();		
+
+				final String fileName = list.getSelectedValue().toString();
+				final String inputFile = "localTemp/" + fileName;
+				final String smbPath = getDirectory(pid, examid) + "/" + fileName;
+
+				// ExecutorService to run the task
+				final ExecutorService executor = Executors.newSingleThreadExecutor();
+
+				final Future<Boolean> result = executor.submit(new SmbUtils.SmbUploaderTask(inputFile, smbPath));
+
+				// Use a background thread to wait for result
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						try {
+							final boolean success = result.get();
+
+							// Switch back to Event Dispatch Thread for GUI update
+							SwingUtilities.invokeLater(new Runnable() {
+								@Override
+								public void run() {
+									if (success) {
+										JOptionPane.showMessageDialog(null, "File uploaded successfully!", "Upload Complete", JOptionPane.INFORMATION_MESSAGE);
+									} else {
+										JOptionPane.showMessageDialog(null, "Upload failed.", "Error", JOptionPane.ERROR_MESSAGE);
+									}
+								}
+							});
+
+						} catch (final Exception e) {
+							e.printStackTrace();
+
+							// Show error on EDT
+							SwingUtilities.invokeLater(new Runnable() {
+								@Override
+								public void run() {
+									JOptionPane.showMessageDialog(null, "An error occurred during upload.", "Exception", JOptionPane.ERROR_MESSAGE);
+								}
+							});
+
+						} finally {
+							executor.shutdown();
+						}
+					}
+				}).start();
 			}
 		});
 		btnNewButton_1.setBounds(763, 92, 88, 27);
@@ -588,7 +634,7 @@ public class TestApproved extends JDialog {
 			// Finally load data to the table
 			model = new DefaultTableModel(Rows_Object_Array,
 					new String[]  {
-							"Exam ID","Patient ID", "Patient Name","Exam Name","Status"
+							"Exam ID","Patient ID", "Patient Name","Exam Name","Status","Approved"
 			}) {
 				@Override
 				public boolean isCellEditable(int row, int column) {
@@ -610,7 +656,8 @@ public class TestApproved extends JDialog {
 			table.getColumnModel().getColumn(4).setPreferredWidth(70);
 			table.getColumnModel().getColumn(4).setMinWidth(70);			
 			table.getColumnModel().getColumn(4).setCellRenderer(new CustomRenderer());
-
+			table.getColumnModel().getColumn(5).setMinWidth(70);			
+			table.getColumnModel().getColumn(5).setCellRenderer(new CustomRenderer());
 
 		} catch (SQLException ex) {
 			Logger.getLogger(TestApproved.class.getName()).log(Level.SEVERE,

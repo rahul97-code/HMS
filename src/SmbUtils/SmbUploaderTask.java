@@ -1,40 +1,35 @@
 package SmbUtils;
+
 import jcifs.smb.SmbFile;
 import jcifs.smb.SmbFileOutputStream;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.concurrent.Callable;
 
-import javax.swing.JOptionPane;
+public class SmbUploaderTask implements Callable<Boolean> {
 
-public class SmbUploaderTask implements Runnable {
+    private String localPath;
+    private String smbPath;
 
-    public static void main(String[] args) {
-        // Sample usage
-        String localFilePath = "C:/localfolder/test.docx";
-        String smbUrl = "smb://username:password@192.168.1.100/sharedfolder/test.docx";
-
-        new Thread(new SmbUploaderTask(localFilePath, smbUrl)).start();
+    public SmbUploaderTask(String localPath, String smbPath) {
+        this.localPath = localPath;
+        this.smbPath = smbPath;
     }
 
+    @Override
+    public Boolean call() {
+        try {
+            File localFile = new File(localPath);
+            if (!localFile.exists()) {
+                System.err.println("Local file does not exist: " + localPath);
+                return false;
+            }
 
-        private String localPath;
-        private String smbPath;
-
-        public SmbUploaderTask(String localPath, String smbPath) {
-            this.localPath = localPath;
-            this.smbPath = smbPath;
-        }
-
-        @Override
-        public void run() {
-            try {
-                File localFile = new File(localPath);
-                InputStream in = new FileInputStream(localFile);
-
-                SmbFile smbFile = new SmbFile(smbPath);
-                OutputStream out = new SmbFileOutputStream(smbFile);
+            try (InputStream in = new FileInputStream(localFile);
+                 OutputStream out = new SmbFileOutputStream(new SmbFile(smbPath))) {
 
                 byte[] buffer = new byte[4096];
                 int len;
@@ -43,15 +38,13 @@ public class SmbUploaderTask implements Runnable {
                     out.write(buffer, 0, len);
                 }
 
-                in.close();
-                out.close();
-
                 System.out.println("File uploaded successfully to SMB share.");
-                JOptionPane.showMessageDialog(null, "File uploaded successfully!", "Upload Complete", JOptionPane.INFORMATION_MESSAGE);
-
-            } catch (Exception e) {
-                e.printStackTrace();
+                return true;
             }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
-
+}
