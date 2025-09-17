@@ -59,23 +59,23 @@ public class ExamDBConnection extends DBConnection {
 		return rs;
 	}
 	public int insertFreeTestData(String[] data) throws Exception {
-	    String insertSQL = "REPLACE INTO free_test_examination "
-	            + "(id,receipt_id, p_id, p_name, p_age, gender, aadhar_no, mob_no, address, "
-	            + "date, hba1c, blood_grp, bp, ht, wt, history, report_collected, "
-	            + "consulted, user_id, user_name) "
-	            + "VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-	    PreparedStatement preparedStatement = connection.prepareStatement(
-	            insertSQL, Statement.RETURN_GENERATED_KEYS);
-	    for (int i = 1; i <= 20; i++) {
-	        preparedStatement.setString(i, data[i - 1]);
-	    }
-	    preparedStatement.executeUpdate();
-	    ResultSet rs = preparedStatement.getGeneratedKeys();
-	    if (rs.next()) {
-	        return rs.getInt(1);
-	    } else {
-	        throw new SQLException("Insert failed, no ID obtained.");
-	    }
+		String insertSQL = "REPLACE INTO free_test_examination "
+				+ "(id,receipt_id, p_id, p_name, p_age, gender, aadhar_no, mob_no, address, "
+				+ "date, hba1c, blood_grp, bp, ht, wt, history, report_collected, "
+				+ "consulted, user_id, user_name) "
+				+ "VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		PreparedStatement preparedStatement = connection.prepareStatement(
+				insertSQL, Statement.RETURN_GENERATED_KEYS);
+		for (int i = 1; i <= 20; i++) {
+			preparedStatement.setString(i, data[i - 1]);
+		}
+		preparedStatement.executeUpdate();
+		ResultSet rs = preparedStatement.getGeneratedKeys();
+		if (rs.next()) {
+			return rs.getInt(1);
+		} else {
+			throw new SQLException("Insert failed, no ID obtained.");
+		}
 	}
 	public ResultSet retrieveData(String query) {
 		try {
@@ -93,7 +93,7 @@ public class ExamDBConnection extends DBConnection {
 		if (price_index > 1) {
 			table_name = table_name + "_" + price_index;
 			if(!AprovelAccess)
-			str="AND exam_rate<5000";
+				str="AND exam_rate<5000";
 		}
 
 		String query = "SELECT exam_code ,exam_desc ,exam_subcat ,exam_rate  from "+table_name+" where IF("+bool+" , exam_desc like '%"+Examcat+"%' "+str+" ,exam_desc like '"+Examcat+"' "+str+" ) AND `exam_text1`!='No' AND exam_code between 99001 and 99999 order by 2,3,1";
@@ -191,6 +191,10 @@ public class ExamDBConnection extends DBConnection {
 				+ "',`exam_operator`='" + examOperator + "' where `exam_id` = "
 				+ exam_id);
 	}
+	public void updateExamApprovedStatus(String exam_id) throws Exception {
+		statement.executeUpdate("update `exam_entery` set `exam_approved` ='1' where `exam_id` = "
+				+ exam_id);
+	}
 	public void updateXrayExamData( String status,
 			String examOperator, String examPerformed,String studyID,String receiptID) throws Exception {
 		statement.executeUpdate("update `exam_entery` set `exam_performed` = '"
@@ -273,7 +277,7 @@ public class ExamDBConnection extends DBConnection {
 		}
 		return rs;
 	}
-	
+
 	public String retrieveOrderNo() {
 		String query = "SELECT `receipt_id` FROM `exam_entery` WHERE receipt_id<>'' order by exam_id DESC limit 1";
 		System.out.println(query);
@@ -294,7 +298,7 @@ public class ExamDBConnection extends DBConnection {
 		}
 		return id;
 	}
-	
+
 	public String retrievePaymentAccessPass() {
 		String query = "SELECT `value` FROM `karun_sparsh_param` WHERE dept = 'PAYMENT_TRACK'";
 		System.out.println(query);
@@ -310,6 +314,21 @@ public class ExamDBConnection extends DBConnection {
 		return "";
 	}
 	
+	public String retrieveUsgBillAccessPass() {
+		String query = "SELECT `value` FROM `karun_sparsh_param` WHERE dept = 'USG_BILL_GEN'";
+		System.out.println(query);
+		try {
+			rs = statement.executeQuery(query);
+			while (rs.next()) {
+				return rs.getObject(1).toString();
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "";
+	}
+
 	public ResultSet retrievePID(String rec_id) {
 		String query = "SELECT `exam_pid`,`exam_pname` FROM `exam_entery` WHERE receipt_id='"+rec_id+"'";
 		System.out.println(query);
@@ -418,7 +437,7 @@ public class ExamDBConnection extends DBConnection {
 	}
 
 	public ResultSet retrievePerformedExamData(String dateFrom, String dateTo, String room) {
-		String query = "select exam_id,exam_pid, exam_pname,exam_name, ee.exam_performed,`exam_approved`  from 	exam_entery ee WHERE\r\n"
+		String query = "select exam_id,exam_pid, exam_pname,exam_name, ee.exam_performed,if(`exam_approved`,'Yes','No')as flag from 	exam_entery ee WHERE\r\n"
 				+ "	ee.`exam_date` BETWEEN '"+dateFrom+"' AND '"+dateTo+"'\r\n"
 				+ "	and ee.exam_performed <> 'Cancel'\r\n"
 				+ "	and ee.exam_room = '"+room+"' order by ee.receipt_id";

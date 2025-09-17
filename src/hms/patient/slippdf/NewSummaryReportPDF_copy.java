@@ -276,7 +276,8 @@ public class NewSummaryReportPDF_copy {
 
 				ServiceTypes.add(rs.getObject(1).toString());
 				InsuranceType.add(rs.getObject(2).toString()); 
-				Description.add(rs.getObject(3).toString()); 
+				Object o=rs.getObject(3)==null?"":rs.getObject(3);
+				Description.add(o.toString()); 
 				quantity.add(rs.getObject(4).toString()); 
 				Amount.add(rs.getObject(5).toString()); 
 

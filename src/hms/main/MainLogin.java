@@ -328,7 +328,7 @@ public class MainLogin extends JFrame {
 					break;
 				case 4:
 					n0 = 0;
-					AccountsUserDBConnection accountsUserDBConnection = new 	AccountsUserDBConnection();
+					AccountsUserDBConnection accountsUserDBConnection = new AccountsUserDBConnection();
 					rs0 = accountsUserDBConnection
 							.retrieveUserPassword(user, pass);
 					try {

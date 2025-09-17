@@ -63,6 +63,22 @@ public class InsuranceDBConnection extends DBConnection {
 			} 
 			return pass;
 		}
+	 public String getMriDocPassword(String doc)
+		{
+		  String query="SELECT value FROM `karun_sparsh_param` WHERE `dept`='"+doc+"' ";
+		  String pass="";
+			try {
+				System.out.println(query);
+				rs = statement.executeQuery(query);
+				while(rs.next()) {
+					pass=rs.getString(1);
+				}
+			} catch (SQLException sqle) {
+				JOptionPane.showMessageDialog(null, sqle.getMessage(), "ERROR",
+				javax.swing.JOptionPane.ERROR_MESSAGE);
+			} 
+			return pass;
+		}
 	public void DeleteInsurance(String index)
 	{
 		String query="DELETE FROM insurance_detail WHERE ins_id ='"+index+"'";

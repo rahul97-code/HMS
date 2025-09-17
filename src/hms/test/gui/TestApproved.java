@@ -6,6 +6,7 @@ import hms.exam.database.ExamDBConnection;
 import hms.exams.gui.ExamEntery;
 import hms.exams.gui.ExamsBrowser;
 import hms.exams.gui.IPDExamEntery;
+import hms.insurance.gui.InsuranceDBConnection;
 import hms.main.DateFormatChange;
 import hms.patient.slippdf.ExamSlippdfRegenerate;
 import hms.patient.slippdf.FreeExamSlippdfRegenerate;
@@ -16,6 +17,7 @@ import hms.store.gui.ItemBrowser.CustomRenderer;
 import hms.store.gui.ItemBrowser.CustomRenderer;
 import hms1.ipd.database.IPDDBConnection;
 import hms1.ipd.gui.DischargeSummary;
+import javax.swing.JPasswordField;
 
 import java.awt.Component;
 import java.awt.Cursor;
@@ -125,6 +127,9 @@ public class TestApproved extends JDialog {
 	private Timer timer;
 	private String type="";
 	private String search,receipt_id="";
+	private static String docKartikPassword="";
+	private static String docJasminePassword="";
+	private static String docEnteredPassword="";
 	DefaultComboBoxModel modelCB=new DefaultComboBoxModel();
 
 	private String w_ID,P_ID="",p_NAME="",r_ID="",DATE="";
@@ -189,7 +194,7 @@ public class TestApproved extends JDialog {
 				new Object[][] {
 				},
 				new String[] {
-						"Receipt ID","WorkOrder ID","Patient ID", "Patient Name","P Type", "Insurance Type", "Exam Name","Exam Price", "Exam Date", "Status"
+						"Exam ID","Patient ID", "Patient Name","Exam Name","Status","Approved"
 				}
 				));
 
@@ -199,10 +204,12 @@ public class TestApproved extends JDialog {
 		table.getColumnModel().getColumn(1).setMinWidth(120);
 		table.getColumnModel().getColumn(2).setPreferredWidth(180);
 		table.getColumnModel().getColumn(2).setMinWidth(180);
-		table.getColumnModel().getColumn(3).setPreferredWidth(400);
-		table.getColumnModel().getColumn(3).setMinWidth(400);
+		table.getColumnModel().getColumn(3).setPreferredWidth(350);
+		table.getColumnModel().getColumn(3).setMinWidth(350);
 		table.getColumnModel().getColumn(4).setPreferredWidth(70);
 		table.getColumnModel().getColumn(4).setMinWidth(70);		
+		table.getColumnModel().getColumn(5).setPreferredWidth(70);
+		table.getColumnModel().getColumn(5).setMinWidth(70);	
 
 		scrollPane.setViewportView(table);
 
@@ -320,7 +327,6 @@ public class TestApproved extends JDialog {
 							dateTo = DateFormatChange
 									.StringToMysqlDate((Date) arg0
 											.getNewValue());
-							//populateTable(dateFrom, dateTo,type);
 						}
 					}
 				});
@@ -393,26 +399,9 @@ public class TestApproved extends JDialog {
 			public Object getElementAt(int index) {
 				return values[index];
 			}
-		})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		;
+		});
+		docKartikPassword=getDocPassword("DR_KARTIK");
+		docJasminePassword=getDocPassword("DR_JASMINE");
 
 		JButton btnNewButton = new JButton("");
 		btnNewButton.addActionListener(new ActionListener() {public void actionPerformed(ActionEvent e) {
@@ -421,6 +410,23 @@ public class TestApproved extends JDialog {
 				return;
 			}
 
+			if(docEnteredPassword.equals("")) {
+				getPassword();
+			}
+
+			if(rdbtnDrKartik.isSelected()) {
+				if(!docKartikPassword.equals(docEnteredPassword)) {
+					docEnteredPassword="";
+					JOptionPane.showMessageDialog(null, "Access denied!");
+					return;
+				}
+			}else {
+				if(!docJasminePassword.equals(docEnteredPassword)) {
+					docEnteredPassword="";
+					JOptionPane.showMessageDialog(null, "Access denied!");
+					return;
+				}
+			}  
 			String inputFile = "localTemp/" + list.getSelectedValue().toString();
 			String sigImagePath = "";
 
@@ -431,8 +437,6 @@ public class TestApproved extends JDialog {
 			}
 
 			File file = new File(inputFile);
-
-			// ✅ Use class loader to check if signature image exists in classpath
 			InputStream sigStream = getClass().getResourceAsStream(sigImagePath);
 			if (sigStream == null) {
 				JOptionPane.showMessageDialog(null, "Signature file not found in resources: " + sigImagePath);
@@ -440,7 +444,6 @@ public class TestApproved extends JDialog {
 			}
 
 			if (file.exists() && file.isFile() && file.getName().toLowerCase().endsWith(".docx")) {
-				// Pass the InputStream or convert to temp file if needed
 				new DoSignatureOnDocx(inputFile, inputFile, sigImagePath);
 			} else {
 				JOptionPane.showMessageDialog(null, "The selected file is not a .docx file.");
@@ -452,6 +455,11 @@ public class TestApproved extends JDialog {
 		panel.add(btnNewButton);
 
 		rdbtnDrKartik = new JRadioButton("Dr. Kartik");
+		rdbtnDrKartik.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				docEnteredPassword="";
+			}
+		});
 		rdbtnDrKartik .setSelected(true);
 		rdbtnDrKartik.setFont(new Font("Dialog", Font.ITALIC, 12));
 		rdbtnDrKartik.setBounds(23, 103, 93, 23);
@@ -461,12 +469,17 @@ public class TestApproved extends JDialog {
 		rdbtnDrJasmine.setFont(new Font("Dialog", Font.ITALIC, 12));
 		rdbtnDrJasmine.setBounds(125, 103, 149, 23);
 		panel.add(rdbtnDrJasmine);
+		rdbtnDrJasmine.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				docEnteredPassword="";
+			}
+		});
 
 		ButtonGroup group = new ButtonGroup();
 		group.add(rdbtnDrKartik);
 		group.add(rdbtnDrJasmine);
 
-		JButton btnNewButton_1 = new JButton("Save");
+		JButton btnNewButton_1 = new JButton("Upload");
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (list.getSelectedValue() == null) {
@@ -477,24 +490,26 @@ public class TestApproved extends JDialog {
 				final String fileName = list.getSelectedValue().toString();
 				final String inputFile = "localTemp/" + fileName;
 				final String smbPath = getDirectory(pid, examid) + "/" + fileName;
-
-				// ExecutorService to run the task
 				final ExecutorService executor = Executors.newSingleThreadExecutor();
-
 				final Future<Boolean> result = executor.submit(new SmbUtils.SmbUploaderTask(inputFile, smbPath));
 
-				// Use a background thread to wait for result
 				new Thread(new Runnable() {
 					@Override
 					public void run() {
 						try {
 							final boolean success = result.get();
-
-							// Switch back to Event Dispatch Thread for GUI update
 							SwingUtilities.invokeLater(new Runnable() {
 								@Override
 								public void run() {
 									if (success) {
+										ExamDBConnection db = new ExamDBConnection();
+										try {
+											db.updateExamApprovedStatus(examid);
+										} catch (Exception e) {
+											// TODO Auto-generated catch block
+											e.printStackTrace();
+										}
+										db.closeConnection();
 										JOptionPane.showMessageDialog(null, "File uploaded successfully!", "Upload Complete", JOptionPane.INFORMATION_MESSAGE);
 									} else {
 										JOptionPane.showMessageDialog(null, "Upload failed.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -504,8 +519,6 @@ public class TestApproved extends JDialog {
 
 						} catch (final Exception e) {
 							e.printStackTrace();
-
-							// Show error on EDT
 							SwingUtilities.invokeLater(new Runnable() {
 								@Override
 								public void run() {
@@ -522,6 +535,17 @@ public class TestApproved extends JDialog {
 		});
 		btnNewButton_1.setBounds(763, 92, 88, 27);
 		panel.add(btnNewButton_1);
+
+		JLabel lblsignatureIsPlaceholder = new JLabel("  is placeholder");
+		lblsignatureIsPlaceholder.setFont(new Font("Dialog", Font.ITALIC, 9));
+		lblsignatureIsPlaceholder.setBounds(516, 118, 172, 15);
+		panel.add(lblsignatureIsPlaceholder);
+
+		JLabel lblsignature = new JLabel("_signature_");
+		lblsignature.setForeground(new Color(255, 0, 0));
+		lblsignature.setFont(new Font("Dialog", Font.ITALIC, 9));
+		lblsignature.setBounds(455, 117, 172, 15);
+		panel.add(lblsignature);
 
 		list.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent event) {
@@ -651,11 +675,12 @@ public class TestApproved extends JDialog {
 			table.getColumnModel().getColumn(1).setMinWidth(120);
 			table.getColumnModel().getColumn(2).setPreferredWidth(160);
 			table.getColumnModel().getColumn(2).setMinWidth(160);
-			table.getColumnModel().getColumn(3).setPreferredWidth(400);
-			table.getColumnModel().getColumn(3).setMinWidth(400);
+			table.getColumnModel().getColumn(3).setPreferredWidth(350);
+			table.getColumnModel().getColumn(3).setMinWidth(350);
 			table.getColumnModel().getColumn(4).setPreferredWidth(70);
 			table.getColumnModel().getColumn(4).setMinWidth(70);			
 			table.getColumnModel().getColumn(4).setCellRenderer(new CustomRenderer());
+			table.getColumnModel().getColumn(5).setPreferredWidth(70);
 			table.getColumnModel().getColumn(5).setMinWidth(70);			
 			table.getColumnModel().getColumn(5).setCellRenderer(new CustomRenderer());
 
@@ -673,10 +698,7 @@ public class TestApproved extends JDialog {
 		String line = null;
 
 		try {
-			// FileReader reads text files in the default encoding.
 			FileReader fileReader = new FileReader(fileName);
-
-			// Always wrap FileReader in BufferedReader.
 			BufferedReader bufferedReader = new BufferedReader(fileReader);
 			String str = null;
 			boolean fetch = true;
@@ -780,7 +802,6 @@ public class TestApproved extends JDialog {
 			// TODO: handle exception
 			return;
 		}
-
 		int bufferSize = 5096;
 
 		byte[] b = new byte[bufferSize];
@@ -881,10 +902,32 @@ public class TestApproved extends JDialog {
 
 				}
 			}
-
 			return cellComponent;
 		}
 	}
+
+	public String getDocPassword(String doc){
+		InsuranceDBConnection db=new InsuranceDBConnection();
+		String pass=db.getMriDocPassword(doc);
+		db.closeConnection();
+		return pass;
+	}
+
+	public static void getPassword() {
+		JPasswordField passwordField = new JPasswordField();
+		int option = JOptionPane.showConfirmDialog(
+				null,
+				passwordField,
+				"Enter password:",
+				JOptionPane.OK_CANCEL_OPTION,
+				JOptionPane.PLAIN_MESSAGE
+				);
+
+		if (option == JOptionPane.OK_OPTION) {
+			docEnteredPassword = new String(passwordField.getPassword());
+		} 
+	}
+
 	private void get() {
 		// TODO Auto-generated method stub
 		table.setAutoCreateRowSorter(true);
