@@ -487,22 +487,6 @@ public class FreeExamSlippdf {
 		new File("ExamSlip").mkdir();
 		RESULT = "ExamSlip/" + exam_id + ".pdf";
 	}
-
-	private void copyFileUsingJava7Files(String source, String dest)
-			throws IOException {
-		SmbFile remoteFile = new SmbFile(dest);
-		OutputStream os = remoteFile.getOutputStream();
-		InputStream is = new FileInputStream(new File(source));
-		int bufferSize = 5096;
-		byte[] b = new byte[bufferSize];
-		int noOfBytes = 0;
-		while ((noOfBytes = is.read(b)) != -1) {
-			os.write(b, 0, noOfBytes);
-		}
-		os.close();
-		is.close();
-	}
-
 	public void readFile() {
 		// The name of the file to open.
 		String fileName = "data.mdi";

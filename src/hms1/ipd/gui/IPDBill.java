@@ -705,12 +705,33 @@ public class IPDBill extends JDialog {
 								JOptionPane.INFORMATION_MESSAGE);
 
 						dispose();
-						try {
+						if(!p_insurancetype.equals("Unknown")) {
+							if(ReceptionMain.insBillAccess) {
+								try {
+									new IPDBillSlippdf(bill_no, ipd_id, ipdDoctorTB
+											.getText(),true);
+								} catch (DocumentException | IOException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
+							}else
+							{
+								try {
+									new ProvisionalIPDBillSlippdf(bill_no, ipd_id, ipdDoctorTB
+											.getText(),true);
+								} catch (DocumentException | IOException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							}
+						}else {
+							try {
 								new IPDBillSlippdf(bill_no, ipd_id, ipdDoctorTB
 										.getText(),true);
-						} catch (DocumentException | IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+							} catch (DocumentException | IOException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
 						}
 					}
 
@@ -1167,11 +1188,35 @@ public class IPDBill extends JDialog {
 		btnProvisionalBill.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				try {
-					new ProvisionalIPDBillSlippdf("Provisional Bill", ipd_id, ipdDoctorTB.getText(),false);
-				} catch (DocumentException | IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+
+
+				if(!p_insurancetype.equals("Unknown")) {
+					if(ReceptionMain.insBillAccess) {
+						try {
+							new IPDBillSlippdf("Provisional Bill", ipd_id, ipdDoctorTB
+									.getText(),false);
+						} catch (DocumentException | IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}else
+					{
+						try {
+							new ProvisionalIPDBillSlippdf("Provisional Bill", ipd_id, ipdDoctorTB.getText(),false);
+						} catch (DocumentException | IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}else {
+					try {
+						new IPDBillSlippdf("Provisional Bill", ipd_id, ipdDoctorTB
+								.getText(),false);
+					} catch (DocumentException | IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+
 				}
 			}
 		});

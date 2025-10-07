@@ -7,6 +7,7 @@ import hms.reception.gui.ReceptionMain;
 import hms.reporttables.PatientOnBedReport;
 import hms1.ipd.database.IPDDBConnection;
 
+import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Toolkit;
@@ -31,16 +32,22 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
 
 import com.itextpdf.text.DocumentException;
 import com.toedter.calendar.JDateChooser;
@@ -317,8 +324,85 @@ public class DialysisIpdBrowser extends JDialog {
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel.setVerticalAlignment(SwingConstants.TOP);
 		lblNewLabel.setIcon(new ImageIcon(DialysisIpdBrowser.class.getResource("/icons/ipdbed.gif")));
-		lblNewLabel.setBounds(10, 311, 158, 96);
+		lblNewLabel.setBounds(10, 330, 158, 77);
 		panel.add(lblNewLabel);
+		
+		JButton btnNewButton_3 = new JButton("Edit Ayushman Reg.");
+		btnNewButton_3.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        int row = ipdbrowserTable.getSelectedRow();
+
+		        if (row != -1) {
+		            int column = 8; // Ayushman Registration Number column
+		            Object oldValue = ipdbrowserTable.getValueAt(row, column);
+		            String ipdentry = ipdbrowserTable.getModel().getValueAt(row, 0).toString();
+
+		            // Create text field with digit-only filter
+		            JTextField inputField = new JTextField(15);
+		            inputField.setText(oldValue != null ? oldValue.toString() : "");
+		            setDigitOnlyFilter(inputField);
+
+		            JPanel panel = new JPanel(new BorderLayout());
+		            panel.add(new JLabel("Edit Ayushman Registration Number:"), BorderLayout.NORTH);
+		            panel.add(inputField, BorderLayout.CENTER);
+
+		            int result = JOptionPane.showConfirmDialog(
+		                null,
+		                panel,
+		                "Update Value",
+		                JOptionPane.OK_CANCEL_OPTION,
+		                JOptionPane.PLAIN_MESSAGE
+		            );
+
+		            if (result == JOptionPane.OK_OPTION) {
+		                String newValue = inputField.getText().trim();
+
+		                if (newValue.isEmpty()) {
+		                    JOptionPane.showMessageDialog(null, "Registration number cannot be empty!", "Input Error", JOptionPane.ERROR_MESSAGE);
+		                    return;
+		                }
+
+		                if (!newValue.equals(oldValue)) {
+		                    ipdbrowserTable.setValueAt(newValue, row, column); // update JTable
+
+		                    try {
+		                        IPDDBConnection ipddbConnection = new IPDDBConnection();
+		                        ipddbConnection.updateAyushmanRegistrationNumber(newValue, Integer.parseInt(ipdentry));
+
+		                        JOptionPane.showMessageDialog(null, "Updated successfully.");
+		                    } catch (Exception ex) {
+		                        JOptionPane.showMessageDialog(null, "Database update failed:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		                    }
+		                }
+		            }
+
+		        } else {
+		            JOptionPane.showMessageDialog(null, "Please select a row first.", "No Selection", JOptionPane.WARNING_MESSAGE);
+		        }
+		    }
+
+		    // Helper method to apply digit-only filter
+		    private void setDigitOnlyFilter(JTextField field) {
+		        ((AbstractDocument) field.getDocument()).setDocumentFilter(new DocumentFilter() {
+		            @Override
+		            public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
+		                if (string.matches("\\d+")) {
+		                    super.insertString(fb, offset, string, attr);
+		                }
+		            }
+
+		            @Override
+		            public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
+		                if (text.matches("\\d+")) {
+		                    super.replace(fb, offset, length, text, attrs);
+		                }
+		            }
+		        });
+		    }
+		});
+
+		btnNewButton_3.setBounds(20, 298, 148, 23);
+		panel.add(btnNewButton_3);
 		JButton btnReturnDiposite = new JButton("Return / Deposit");
 		btnReturnDiposite.addActionListener(new ActionListener() {
 			@Override
@@ -392,7 +476,7 @@ public class DialysisIpdBrowser extends JDialog {
             }
             //Finally load data to the table
             DefaultTableModel model = new DefaultTableModel(Rows_Object_Array, new String[] {
-            		"IPD No.","Type", "Patient ID", "Patient Name","Insurance Type",  "Ward Name", "Bed No.","Date"
+            		"IPD No.","Type", "Patient ID", "Patient Name","Insurance Type",  "Ward Name", "Bed No.","Date", "Ayushman Registration"
     			}) {
     			@Override
     			public boolean isCellEditable(int row, int column) {
@@ -407,6 +491,8 @@ public class DialysisIpdBrowser extends JDialog {
     		ipdbrowserTable.getColumnModel().getColumn(4).setMinWidth(100);
     		ipdbrowserTable.getColumnModel().getColumn(5).setMinWidth(100);
     		ipdbrowserTable.getColumnModel().getColumn(6).setMinWidth(110);
+    		ipdbrowserTable.getColumnModel().getColumn(8).setMinWidth(130);
+
    
         } catch (SQLException ex) {
             Logger.getLogger(DialysisIpdBrowser.class.getName()).log(Level.SEVERE, null, ex);

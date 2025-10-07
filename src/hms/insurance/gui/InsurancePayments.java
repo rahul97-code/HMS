@@ -189,6 +189,7 @@ public class InsurancePayments extends JDialog {
 		lblDateFrom.setFont(new Font("Tahoma", Font.PLAIN, 12));
 
 		JButton btnNewButton_2 = new JButton("Search");
+		btnNewButton_2.setBounds(587, 39, 111, 25);
 		btnNewButton_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				int i=tabbedPane.getSelectedIndex();
@@ -215,14 +216,13 @@ public class InsurancePayments extends JDialog {
 
 			}
 		});
-		btnNewButton_2.setBounds(587, 39, 111, 25);
 		panel.add(btnNewButton_2);
 		btnNewButton_2.setIcon(new ImageIcon(InsurancePayments.class.getResource("/icons/zoom_r_button.png")));
 		btnNewButton_2.setFont(new Font("Tahoma", Font.PLAIN, 12));
 
 		JButton btnExcel = new JButton("Excel");
-		btnExcel.setEnabled(false);
 		btnExcel.setBounds(713, 39, 120, 25);
+		btnExcel.setEnabled(false);
 		panel.add(btnExcel);
 		btnExcel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -643,6 +643,17 @@ public class InsurancePayments extends JDialog {
 				});
 		dateToDC.setDate(new Date());
 		dateToDC.setDateFormatString("yyyy-MM-dd");
+		
+		JButton btnImportExcel = new JButton("import Excel");
+		btnImportExcel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ExcelToDB db =new ExcelToDB();
+				db.setVisible(true);
+			}
+		});
+		btnImportExcel.setBounds(713, 7, 117, 25);
+		btnImportExcel.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		panel.add(btnImportExcel);
 	}
 
 	public void searchTableContents(String searchString, JTable tableToPopulate, List<Vector> originalDataList) {

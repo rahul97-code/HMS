@@ -2078,24 +2078,34 @@ public class Test extends JFrame {
 		if (!targetLocation.exists()) {
 			targetLocation.mkdir();
 		}
-		POIFSFileSystem fs = null;
-		try {
-			fs = new POIFSFileSystem(new FileInputStream(folder + "/"
-					+ templateFileCB.getSelectedItem()));
-			HWPFDocument doc = new HWPFDocument(fs);
-
-			doc = replaceText(doc, "p_id", p_id);
-			doc = replaceText(doc, "p_name", p_name);
-			doc = replaceText(doc, "age_sex", patient_age + "/" + p_sex);
-			doc = replaceText(doc, "doctor_ref", exam_doctorname);
-			doc = replaceText(doc, "test_date",
-					DateFormatChange.getCurrentDate());
-			saveWord(targetLocation + "/" + fileName, doc);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//		POIFSFileSystem fs = null;
+//		try {
+//			fs = new POIFSFileSystem(new FileInputStream(folder + "/"
+//					+ templateFileCB.getSelectedItem()));
+//			HWPFDocument doc = new HWPFDocument(fs);
+//
+//			doc = replaceText(doc, "p_id", p_id);
+//			doc = replaceText(doc, "p_name", p_name);
+//			doc = replaceText(doc, "age_sex", patient_age + "/" + p_sex);
+//			doc = replaceText(doc, "doctor_ref", exam_doctorname);
+//			doc = replaceText(doc, "test_date",
+//					DateFormatChange.getCurrentDate());
+//			saveWord(targetLocation + "/" + fileName, doc);
+//		} catch (FileNotFoundException e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+		WordReplacer.process(
+			    folder + "/" + templateFileCB.getSelectedItem(),
+			    targetLocation + "/" + fileName,
+			    p_id,
+			    p_name,
+			    patient_age,
+			    p_sex,
+			    exam_doctorname,
+			    DateFormatChange.getCurrentDate()
+			);
 
 		if (isWindows()) {
 			OPenFileWindows("localTemp/" + fileName + "");

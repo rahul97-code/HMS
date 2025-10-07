@@ -6,6 +6,7 @@ import hms.exam.database.ExamDBConnection;
 import hms.exams.gui.ExamEntery;
 import hms.exams.gui.ExamsBrowser;
 import hms.exams.gui.IPDExamEntery;
+import hms.insurance.gui.InsuranceDBConnection;
 import hms.main.DateFormatChange;
 import hms.patient.slippdf.ExamSlippdfRegenerate;
 import hms.patient.slippdf.FreeExamSlippdfRegenerate;
@@ -16,6 +17,7 @@ import hms.store.gui.ItemBrowser.CustomRenderer;
 import hms.store.gui.ItemBrowser.CustomRenderer;
 import hms1.ipd.database.IPDDBConnection;
 import hms1.ipd.gui.DischargeSummary;
+import javax.swing.JPasswordField;
 
 import java.awt.Component;
 import java.awt.Cursor;
@@ -35,6 +37,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -48,6 +51,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Vector;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -75,6 +81,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
@@ -102,6 +109,7 @@ import javax.swing.border.LineBorder;
 import java.awt.Color;
 import javax.swing.border.BevelBorder;
 import javax.swing.JProgressBar;
+import javax.swing.JSlider;
 
 public class TestApproved extends JDialog {
 
@@ -119,6 +127,9 @@ public class TestApproved extends JDialog {
 	private Timer timer;
 	private String type="";
 	private String search,receipt_id="";
+	private static String docKartikPassword="";
+	private static String docJasminePassword="";
+	private static String docEnteredPassword="";
 	DefaultComboBoxModel modelCB=new DefaultComboBoxModel();
 
 	private String w_ID,P_ID="",p_NAME="",r_ID="",DATE="";
@@ -132,6 +143,7 @@ public class TestApproved extends JDialog {
 	protected String pid;
 	private String[] open=new String[5];
 	protected String examid;
+	private JRadioButton rdbtnDrKartik;
 
 
 	/**
@@ -182,7 +194,7 @@ public class TestApproved extends JDialog {
 				new Object[][] {
 				},
 				new String[] {
-						"Receipt ID","WorkOrder ID","Patient ID", "Patient Name","P Type", "Insurance Type", "Exam Name","Exam Price", "Exam Date", "Status"
+						"Exam ID","Patient ID", "Patient Name","Exam Name","Status","Approved"
 				}
 				));
 
@@ -192,11 +204,13 @@ public class TestApproved extends JDialog {
 		table.getColumnModel().getColumn(1).setMinWidth(120);
 		table.getColumnModel().getColumn(2).setPreferredWidth(180);
 		table.getColumnModel().getColumn(2).setMinWidth(180);
-		table.getColumnModel().getColumn(3).setPreferredWidth(400);
-		table.getColumnModel().getColumn(3).setMinWidth(400);
+		table.getColumnModel().getColumn(3).setPreferredWidth(350);
+		table.getColumnModel().getColumn(3).setMinWidth(350);
 		table.getColumnModel().getColumn(4).setPreferredWidth(70);
 		table.getColumnModel().getColumn(4).setMinWidth(70);		
-		
+		table.getColumnModel().getColumn(5).setPreferredWidth(70);
+		table.getColumnModel().getColumn(5).setMinWidth(70);	
+
 		scrollPane.setViewportView(table);
 
 		table.addMouseListener(new MouseListener() {
@@ -234,7 +248,7 @@ public class TestApproved extends JDialog {
 				JTable target = (JTable) arg0.getSource();
 				if (arg0.getClickCount() == 1) {
 					try {
-						
+
 						int row=table.getSelectedRow();
 						pid=table.getValueAt(row, 1).toString();
 						examid=table.getValueAt(row, 0).toString();
@@ -283,7 +297,7 @@ public class TestApproved extends JDialog {
 		panel.setLayout(null);
 
 		JDateChooser dateFromDC_1 = new JDateChooser();
-		dateFromDC_1.setBounds(38, 85, 178, 27);
+		dateFromDC_1.setBounds(13, 65, 143, 27);
 		panel.add(dateFromDC_1);
 		dateFromDC_1.getDateEditor().addPropertyChangeListener(
 				new PropertyChangeListener() {
@@ -302,7 +316,7 @@ public class TestApproved extends JDialog {
 		dateFromDC_1.setMaxSelectableDate(new Date());
 		dateFromDC_1.setDateFormatString("yyyy-MM-dd");
 		dateToDC = new JDateChooser();
-		dateToDC.setBounds(228, 85, 178, 27);
+		dateToDC.setBounds(167, 65, 143, 27);
 		panel.add(dateToDC);
 		dateToDC.getDateEditor().addPropertyChangeListener(
 				new PropertyChangeListener() {
@@ -313,7 +327,6 @@ public class TestApproved extends JDialog {
 							dateTo = DateFormatChange
 									.StringToMysqlDate((Date) arg0
 											.getNewValue());
-							//populateTable(dateFrom, dateTo,type);
 						}
 					}
 				});
@@ -322,12 +335,12 @@ public class TestApproved extends JDialog {
 		dateToDC.setDateFormatString("yyyy-MM-dd");
 
 		JLabel lblDateTo = new JLabel("DATE : TO");
-		lblDateTo.setBounds(276, 59, 73, 14);
+		lblDateTo.setBounds(191, 39, 73, 14);
 		panel.add(lblDateTo);
 		lblDateTo.setFont(new Font("Tahoma", Font.PLAIN, 12));
 
 		JLabel lblDateFrom = new JLabel("DATE : From");
-		lblDateFrom.setBounds(85, 59, 82, 14);
+		lblDateFrom.setBounds(36, 39, 82, 14);
 		panel.add(lblDateFrom);
 		lblDateFrom.setFont(new Font("Tahoma", Font.PLAIN, 12));
 
@@ -340,13 +353,13 @@ public class TestApproved extends JDialog {
 
 		JLabel lblNewLabel_2 = new JLabel("");
 		lblNewLabel_2.setBorder(new LineBorder(UIManager.getColor("Button.select")));
-		lblNewLabel_2.setBounds(218, 29, 747, 2);
+		lblNewLabel_2.setBounds(218, 19, 747, 2);
 		panel.add(lblNewLabel_2);
 
 		JLabel lblNewLabel_3 = new JLabel("RIS System");
 		lblNewLabel_3.setForeground(UIManager.getColor("CheckBoxMenuItem.acceleratorForeground"));
 		lblNewLabel_3.setFont(new Font("Dialog", Font.ITALIC, 16));
-		lblNewLabel_3.setBounds(40, 16, 183, 31);
+		lblNewLabel_3.setBounds(40, 6, 183, 31);
 		panel.add(lblNewLabel_3);
 
 		btnNewButton_2 = new JButton("Search");
@@ -356,11 +369,11 @@ public class TestApproved extends JDialog {
 
 			}
 		});
-		btnNewButton_2.setBounds(418, 86, 88, 25);
+		btnNewButton_2.setBounds(324, 66, 88, 25);
 		panel.add(btnNewButton_2);
 
 		JPanel panel_1 = new JPanel();
-		panel_1.setBounds(552, 43, 303, 82);
+		panel_1.setBounds(441, 34, 303, 82);
 		panel.add(panel_1);
 		panel_1.setLayout(null);
 		panel_1.setBorder(new TitledBorder(null, "Files", TitledBorder.LEADING,
@@ -387,6 +400,153 @@ public class TestApproved extends JDialog {
 				return values[index];
 			}
 		});
+		docKartikPassword=getDocPassword("DR_KARTIK");
+		docJasminePassword=getDocPassword("DR_JASMINE");
+
+		JButton btnNewButton = new JButton("");
+		btnNewButton.addActionListener(new ActionListener() {public void actionPerformed(ActionEvent e) {
+			if (list.getSelectedValue() == null) {
+				JOptionPane.showMessageDialog(null, "Select File First!");
+				return;
+			}
+
+			if(docEnteredPassword.equals("")) {
+				getPassword();
+			}
+
+			if(rdbtnDrKartik.isSelected()) {
+				if(!docKartikPassword.equals(docEnteredPassword)) {
+					docEnteredPassword="";
+					JOptionPane.showMessageDialog(null, "Access denied!");
+					return;
+				}
+			}else {
+				if(!docJasminePassword.equals(docEnteredPassword)) {
+					docEnteredPassword="";
+					JOptionPane.showMessageDialog(null, "Access denied!");
+					return;
+				}
+			}  
+			String inputFile = "localTemp/" + list.getSelectedValue().toString();
+			String sigImagePath = "";
+
+			if (rdbtnDrKartik.isSelected()) {
+				sigImagePath = "/icons/kartik_sig.png";
+			} else {
+				sigImagePath = "/icons/jasmine_sig.png";
+			}
+
+			File file = new File(inputFile);
+			InputStream sigStream = getClass().getResourceAsStream(sigImagePath);
+			if (sigStream == null) {
+				JOptionPane.showMessageDialog(null, "Signature file not found in resources: " + sigImagePath);
+				return;
+			}
+
+			if (file.exists() && file.isFile() && file.getName().toLowerCase().endsWith(".docx")) {
+				new DoSignatureOnDocx(inputFile, inputFile, sigImagePath);
+			} else {
+				JOptionPane.showMessageDialog(null, "The selected file is not a .docx file.");
+			}
+		}
+		});
+		btnNewButton.setIcon(new ImageIcon(TestApproved.class.getResource("/icons/paint.gif")));
+		btnNewButton.setBounds(763, 41, 88, 42);
+		panel.add(btnNewButton);
+
+		rdbtnDrKartik = new JRadioButton("Dr. Kartik");
+		rdbtnDrKartik.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				docEnteredPassword="";
+			}
+		});
+		rdbtnDrKartik .setSelected(true);
+		rdbtnDrKartik.setFont(new Font("Dialog", Font.ITALIC, 12));
+		rdbtnDrKartik.setBounds(23, 103, 93, 23);
+		panel.add(rdbtnDrKartik);
+
+		JRadioButton rdbtnDrJasmine = new JRadioButton("Dr. Jasmine Kaur");
+		rdbtnDrJasmine.setFont(new Font("Dialog", Font.ITALIC, 12));
+		rdbtnDrJasmine.setBounds(125, 103, 149, 23);
+		panel.add(rdbtnDrJasmine);
+		rdbtnDrJasmine.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				docEnteredPassword="";
+			}
+		});
+
+		ButtonGroup group = new ButtonGroup();
+		group.add(rdbtnDrKartik);
+		group.add(rdbtnDrJasmine);
+
+		JButton btnNewButton_1 = new JButton("Upload");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (list.getSelectedValue() == null) {
+					JOptionPane.showMessageDialog(null, "Select File First!");
+					return;
+				}
+
+				final String fileName = list.getSelectedValue().toString();
+				final String inputFile = "localTemp/" + fileName;
+				final String smbPath = getDirectory(pid, examid) + "/" + fileName;
+				final ExecutorService executor = Executors.newSingleThreadExecutor();
+				final Future<Boolean> result = executor.submit(new SmbUtils.SmbUploaderTask(inputFile, smbPath));
+
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						try {
+							final boolean success = result.get();
+							SwingUtilities.invokeLater(new Runnable() {
+								@Override
+								public void run() {
+									if (success) {
+										ExamDBConnection db = new ExamDBConnection();
+										try {
+											db.updateExamApprovedStatus(examid);
+										} catch (Exception e) {
+											// TODO Auto-generated catch block
+											e.printStackTrace();
+										}
+										db.closeConnection();
+										JOptionPane.showMessageDialog(null, "File uploaded successfully!", "Upload Complete", JOptionPane.INFORMATION_MESSAGE);
+									} else {
+										JOptionPane.showMessageDialog(null, "Upload failed.", "Error", JOptionPane.ERROR_MESSAGE);
+									}
+								}
+							});
+
+						} catch (final Exception e) {
+							e.printStackTrace();
+							SwingUtilities.invokeLater(new Runnable() {
+								@Override
+								public void run() {
+									JOptionPane.showMessageDialog(null, "An error occurred during upload.", "Exception", JOptionPane.ERROR_MESSAGE);
+								}
+							});
+
+						} finally {
+							executor.shutdown();
+						}
+					}
+				}).start();
+			}
+		});
+		btnNewButton_1.setBounds(763, 92, 88, 27);
+		panel.add(btnNewButton_1);
+
+		JLabel lblsignatureIsPlaceholder = new JLabel("  is placeholder");
+		lblsignatureIsPlaceholder.setFont(new Font("Dialog", Font.ITALIC, 9));
+		lblsignatureIsPlaceholder.setBounds(516, 118, 172, 15);
+		panel.add(lblsignatureIsPlaceholder);
+
+		JLabel lblsignature = new JLabel("_signature_");
+		lblsignature.setForeground(new Color(255, 0, 0));
+		lblsignature.setFont(new Font("Dialog", Font.ITALIC, 9));
+		lblsignature.setBounds(455, 117, 172, 15);
+		panel.add(lblsignature);
+
 		list.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent event) {
 				if (!event.getValueIsAdjusting()) {
@@ -396,43 +556,40 @@ public class TestApproved extends JDialog {
 					} catch (Exception e) {
 						// TODO: handle exception
 					}
-					
+
 
 				}
 			}
 		});
 
-		list.addListSelectionListener(new ListSelectionListener() {
-
+		list.addMouseListener(new MouseAdapter() {
 			@Override
-			public void valueChanged(ListSelectionEvent arg0) {
-				try {
-					if (!arg0.getValueIsAdjusting()) {
-					
-						if (isWindows()) {
-							OPenFileWindows("localTemp/"
-									+ list.getSelectedValue().toString() + "");
-						}else if (isUnix()) {
-
-							if (System.getProperty("os.version").equals("3.11.0-12-generic")) {
-								Run(new String[] { "/bin/bash", "-c",
-										open[0] + " localTemp/" + list.getSelectedValue().toString() });
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2) { // Double-click detected
+					int index = list.locationToIndex(e.getPoint()); // get index of clicked item
+					if (index >= 0) {
+						String selectedValue = list.getModel().getElementAt(index).toString();
+						try {
+							if (isWindows()) {
+								OPenFileWindows("localTemp/" + selectedValue);
+							} else if (isUnix()) {
+								if (System.getProperty("os.version").equals("3.11.0-12-generic")) {
+									Run(new String[] { "/bin/bash", "-c", open[0] + " localTemp/" + selectedValue });
+								} else {
+									Run(new String[] { "/bin/bash", "-c", open[1] + " localTemp/" + selectedValue });
+								}
 							} else {
-								Run(new String[] { "/bin/bash", "-c",
-										open[1] + " localTemp/" + list.getSelectedValue().toString() });
+								Run(new String[] { "/bin/bash", "-c", open[2] + " localTemp/" + selectedValue });
 							}
-						} else {
-							Run(new String[] { "/bin/bash", "-c",
-									open[2] + " localTemp/" + list.getSelectedValue().toString() });
+						} catch (Exception ex) {
+							ex.printStackTrace();
+							JOptionPane.showMessageDialog(null, "Error opening file: " + ex.getMessage());
 						}
-						
 					}
-				} catch (Exception e) {
-					// TODO: handle exception
 				}
 			}
-
 		});
+
 
 		timer = new Timer(1, new ActionListener() {
 
@@ -501,7 +658,7 @@ public class TestApproved extends JDialog {
 			// Finally load data to the table
 			model = new DefaultTableModel(Rows_Object_Array,
 					new String[]  {
-							"Exam ID","Patient ID", "Patient Name","Exam Name","Status"
+							"Exam ID","Patient ID", "Patient Name","Exam Name","Status","Approved"
 			}) {
 				@Override
 				public boolean isCellEditable(int row, int column) {
@@ -518,12 +675,14 @@ public class TestApproved extends JDialog {
 			table.getColumnModel().getColumn(1).setMinWidth(120);
 			table.getColumnModel().getColumn(2).setPreferredWidth(160);
 			table.getColumnModel().getColumn(2).setMinWidth(160);
-			table.getColumnModel().getColumn(3).setPreferredWidth(400);
-			table.getColumnModel().getColumn(3).setMinWidth(400);
+			table.getColumnModel().getColumn(3).setPreferredWidth(350);
+			table.getColumnModel().getColumn(3).setMinWidth(350);
 			table.getColumnModel().getColumn(4).setPreferredWidth(70);
 			table.getColumnModel().getColumn(4).setMinWidth(70);			
 			table.getColumnModel().getColumn(4).setCellRenderer(new CustomRenderer());
-
+			table.getColumnModel().getColumn(5).setPreferredWidth(70);
+			table.getColumnModel().getColumn(5).setMinWidth(70);			
+			table.getColumnModel().getColumn(5).setCellRenderer(new CustomRenderer());
 
 		} catch (SQLException ex) {
 			Logger.getLogger(TestApproved.class.getName()).log(Level.SEVERE,
@@ -539,10 +698,7 @@ public class TestApproved extends JDialog {
 		String line = null;
 
 		try {
-			// FileReader reads text files in the default encoding.
 			FileReader fileReader = new FileReader(fileName);
-
-			// Always wrap FileReader in BufferedReader.
 			BufferedReader bufferedReader = new BufferedReader(fileReader);
 			String str = null;
 			boolean fetch = true;
@@ -571,13 +727,12 @@ public class TestApproved extends JDialog {
 	}
 
 	public String getDirectory(String pid, String exam_id) {
-
 		return mainDir + "/HMS/Patient/" + pid + "/Exam/" + exam_id + "/";
 	}
-	
 
 
-	
+
+
 	public void LocalCopy(String path, String index)
 			throws MalformedURLException, SmbException {
 		System.out.println(path);
@@ -615,7 +770,7 @@ public class TestApproved extends JDialog {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void Run(String[] cmd) {
 		try {
 			Process process = Runtime.getRuntime().exec(cmd);
@@ -647,7 +802,6 @@ public class TestApproved extends JDialog {
 			// TODO: handle exception
 			return;
 		}
-
 		int bufferSize = 5096;
 
 		byte[] b = new byte[bufferSize];
@@ -659,7 +813,7 @@ public class TestApproved extends JDialog {
 		is.close();
 
 	}
-	
+
 	public static boolean deleteLocalTemp(File directory) {
 
 		if (directory.exists()) {
@@ -734,24 +888,46 @@ public class TestApproved extends JDialog {
 		list.setListData(files);
 	}
 	public class CustomRenderer extends DefaultTableCellRenderer 
-	  {
-	      public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
-	      {
-	          Component cellComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+	{
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
+		{
+			Component cellComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-	          if(table.getValueAt(row, column)!=null)
-	          {
-	        	  if(table.getValueAt(row, column).equals("Yes")){
-		              cellComponent.setBackground(Color.GREEN);
-		          } else{
-		        	  cellComponent.setBackground(Color.WHITE);
-		        	 
-		          }
-	          }
-	         
-	          return cellComponent;
-	      }
-	  }
+			if(table.getValueAt(row, column)!=null)
+			{
+				if(table.getValueAt(row, column).equals("Yes")){
+					cellComponent.setBackground(Color.GREEN);
+				} else{
+					cellComponent.setBackground(Color.WHITE);
+
+				}
+			}
+			return cellComponent;
+		}
+	}
+
+	public String getDocPassword(String doc){
+		InsuranceDBConnection db=new InsuranceDBConnection();
+		String pass=db.getMriDocPassword(doc);
+		db.closeConnection();
+		return pass;
+	}
+
+	public static void getPassword() {
+		JPasswordField passwordField = new JPasswordField();
+		int option = JOptionPane.showConfirmDialog(
+				null,
+				passwordField,
+				"Enter password:",
+				JOptionPane.OK_CANCEL_OPTION,
+				JOptionPane.PLAIN_MESSAGE
+				);
+
+		if (option == JOptionPane.OK_OPTION) {
+			docEnteredPassword = new String(passwordField.getPassword());
+		} 
+	}
+
 	private void get() {
 		// TODO Auto-generated method stub
 		table.setAutoCreateRowSorter(true);

@@ -1,5 +1,6 @@
 package hms.reception.gui;
 
+import hms.JDialogs.gui.FreeUsgBillGenerateDialog;
 import hms.admin.gui.DailyCash;
 import hms.doctor.gui.DoctorMain;
 import hms.exam.database.ExamDBConnection;
@@ -150,8 +151,8 @@ public class ReceptionMain<EmergencyIPD> extends JFrame {
 
 		// setExtendedState(JFrame.MAXIMIZED_BOTH);
 		setVisible(true);
-	
-	
+
+
 		contentPane.setBackground(SystemColor.control);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -160,9 +161,9 @@ public class ReceptionMain<EmergencyIPD> extends JFrame {
 		scrollPane.setBounds(20, 102, 232, 503);
 
 		scrollPane
-				.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+		.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scrollPane
-				.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
 		scrollPane.getVerticalScrollBar().setUnitIncrement(20);
 		scrollPane.getHorizontalScrollBar().setUnitIncrement(20);
@@ -214,7 +215,7 @@ public class ReceptionMain<EmergencyIPD> extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				patientBrowser = new PatientBrowser();
 				patientBrowser
-						.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+				.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 				patientBrowser.setLocationRelativeTo(contentPane);
 				patientBrowser.setVisible(true);
 				ua.check_activity(username, 126, 0);
@@ -242,7 +243,7 @@ public class ReceptionMain<EmergencyIPD> extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 
-//				MiscAmountEntery ds = new MiscAmountEntery();
+				//				MiscAmountEntery ds = new MiscAmountEntery();
 				MISCBrowser ds = new MISCBrowser(username);
 				ds.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 				ds.setLocationRelativeTo(contentPane);
@@ -274,10 +275,10 @@ public class ReceptionMain<EmergencyIPD> extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 
-			
+
 				ipdBrowser = new IPDBrowser(username);
 				ipdBrowser
-						.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+				.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 				ipdBrowser.setLocationRelativeTo(contentPane);
 				ipdBrowser.setVisible(true);
 			}
@@ -302,31 +303,31 @@ public class ReceptionMain<EmergencyIPD> extends JFrame {
 		});
 		btnShortcuts.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		panel.add(btnShortcuts);
-		
+
 		JButton btnDfg = new JButton("Payment Track");
 		btnDfg.setBounds(10, 367, 199, 39);
 		btnDfg.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		        JPasswordField passwordField = new JPasswordField();
-		        ExamDBConnection db =new ExamDBConnection();
-		        Object[] message = { "Enter Password:", passwordField };
+			public void actionPerformed(ActionEvent e) {
+				JPasswordField passwordField = new JPasswordField();
+				ExamDBConnection db =new ExamDBConnection();
+				Object[] message = { "Enter Password:", passwordField };
 
-		        int option = JOptionPane.showConfirmDialog(
-		            null, message, "Password Required", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE
-		        );
+				int option = JOptionPane.showConfirmDialog(
+						null, message, "Password Required", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE
+						);
 
-		        if (option == JOptionPane.OK_OPTION) {
-		            String enteredPassword = new String(passwordField.getPassword());		          
-		            if (db.retrievePaymentAccessPass().equals(enteredPassword)) {
-		                InsurancePayments obj = new InsurancePayments("", "");
-		                obj.setVisible(true);
-		                obj.setModal(true);
-		            } else {
-		                JOptionPane.showMessageDialog(null, "Incorrect password!", "Access Denied", JOptionPane.ERROR_MESSAGE);
-		            }
-		        }
-		        db.closeConnection();
-		    }
+				if (option == JOptionPane.OK_OPTION) {
+					String enteredPassword = new String(passwordField.getPassword());		          
+					if (db.retrievePaymentAccessPass().equals(enteredPassword)) {
+						InsurancePayments obj = new InsurancePayments("", "");
+						obj.setVisible(true);
+						obj.setModal(true);
+					} else {
+						JOptionPane.showMessageDialog(null, "Incorrect password!", "Access Denied", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				db.closeConnection();
+			}
 		});
 
 		btnDfg.setFont(new Font("Dialog", Font.PLAIN, 20));
@@ -338,11 +339,11 @@ public class ReceptionMain<EmergencyIPD> extends JFrame {
 		panel_1.setLayout(null);
 		panel_1.setBorder(new TitledBorder(UIManager
 
-		.getBorder("TitledBorder.border"), "News", TitledBorder.RIGHT,
+				.getBorder("TitledBorder.border"), "News", TitledBorder.RIGHT,
 
-		TitledBorder.TOP, new Font("Tahoma", Font.PLAIN, 12), null));
+				TitledBorder.TOP, new Font("Tahoma", Font.PLAIN, 12), null));
 		contentPane.add(panel_1);
-		
+
 		NewsDBConnection newsDBConnection = new NewsDBConnection();
 		JLabel newsLB = new MarqueeLabel(newsDBConnection.getNews(),
 				MarqueeLabel.RIGHT_TO_LEFT, 20);
@@ -393,7 +394,7 @@ public class ReceptionMain<EmergencyIPD> extends JFrame {
 		panel_3.setLayout(null);
 		panel_3.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null,
 
-		null, null));
+				null, null));
 		contentPane.add(panel_3);
 
 		JLabel label_3 = new JLabel(
@@ -461,11 +462,11 @@ public class ReceptionMain<EmergencyIPD> extends JFrame {
 		btnMiscSlip.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		btnMiscSlip.setBounds(158, 86, 136, 63);
 		shortCutsPanel.add(btnMiscSlip);
-		
+
 		JButton btnOnlineOpd = new JButton("ONLINE OPD");
 		btnOnlineOpd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
+
 				OnlineOPDBrowser miscCharges = new OnlineOPDBrowser();
 				miscCharges.setVisible(true);
 			}
@@ -473,11 +474,11 @@ public class ReceptionMain<EmergencyIPD> extends JFrame {
 		btnOnlineOpd.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		btnOnlineOpd.setBounds(454, 86, 145, 63);
 		shortCutsPanel.add(btnOnlineOpd);
-		
+
 		JButton EmergencyIPD = new JButton("Emergency IPD");
 		EmergencyIPD.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
+
 				EmergencyIPD emripd=(EmergencyIPD) new EmergencyIpd(null);
 				((Dialog) emripd).setVisible(true);
 			}
@@ -485,11 +486,11 @@ public class ReceptionMain<EmergencyIPD> extends JFrame {
 		EmergencyIPD.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		EmergencyIPD.setBounds(306, 11, 145, 63);
 		shortCutsPanel.add(EmergencyIPD);
-		
+
 		JButton procedureipd = new JButton("Procedure IPD");
 		procedureipd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
+
 				ProcedureIPD procipd=(ProcedureIPD) new ProcedureIPD(null);
 				((Dialog) procipd).setVisible(true);
 			}
@@ -497,7 +498,7 @@ public class ReceptionMain<EmergencyIPD> extends JFrame {
 		procedureipd.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		procedureipd.setBounds(461, 11, 138, 63);
 		shortCutsPanel.add(procedureipd);
-		
+
 		JButton btnDialysisIpd = new JButton("Dialysis IPD");
 		btnDialysisIpd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -508,7 +509,7 @@ public class ReceptionMain<EmergencyIPD> extends JFrame {
 		btnDialysisIpd.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		btnDialysisIpd.setBounds(302, 86, 141, 63);
 		shortCutsPanel.add(btnDialysisIpd);
-		
+
 		JButton btnOpdExam = new JButton("OPD EXAM");
 		btnOpdExam.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -565,10 +566,10 @@ public class ReceptionMain<EmergencyIPD> extends JFrame {
 			}
 		});
 		mnMyReport.add(mntmMyCollection);
-		
+
 		JMenu mnIpdBilling = new JMenu("IPD Billing");
 		menuBar.add(mnIpdBilling);
-		
+
 		JMenuItem mntmEsiBill = new JMenuItem("ESI Bill");
 		mntmEsiBill.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -576,11 +577,11 @@ public class ReceptionMain<EmergencyIPD> extends JFrame {
 				patientHistory.setModal(true);
 				patientHistory.setVisible(true);
 				ua.check_activity(username,113,0);
-				
+
 			}
 		});
 		mnIpdBilling.add(mntmEsiBill);
-		
+
 		JMenuItem mntmEchsBill = new JMenuItem("ECHS Bill");
 		mntmEchsBill.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -588,11 +589,11 @@ public class ReceptionMain<EmergencyIPD> extends JFrame {
 				patientHistory.setModal(true);
 				patientHistory.setVisible(true);
 				ua.check_activity(username,114,0);
-				
+
 			}
 		});
 		mnIpdBilling.add(mntmEchsBill);
-		
+
 		JMenuItem mntmRailwayBill = new JMenuItem("Railway Bill");
 		mntmRailwayBill.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -655,7 +656,7 @@ public class ReceptionMain<EmergencyIPD> extends JFrame {
 				} catch (Exception e) {
 					// TODO: handle exception
 				}
-				
+
 				if(!_id.equals("0"))
 				{
 					if(!aLwaysFront.isVisible())
@@ -663,7 +664,7 @@ public class ReceptionMain<EmergencyIPD> extends JFrame {
 						aLwaysFront =new ALwaysFront();
 						aLwaysFront.setVisible(true);
 					}
-					
+
 				}else {
 					aLwaysFront.setVisible(false);
 				}
@@ -678,11 +679,11 @@ public class ReceptionMain<EmergencyIPD> extends JFrame {
 				if (!_id.equals("0")) {
 					if(!aLwaysFront.isVisible())
 						aLwaysFront =new ALwaysFront();
-						aLwaysFront.setVisible(true);
+					aLwaysFront.setVisible(true);
 
 				} else {
 					JOptionPane
-							.showMessageDialog(null, "Please Select Counter");
+					.showMessageDialog(null, "Please Select Counter");
 				}
 
 			}
@@ -718,51 +719,51 @@ public class ReceptionMain<EmergencyIPD> extends JFrame {
 				}
 				else {
 					JOptionPane
-							.showMessageDialog(null, "Please Select Counter");
+					.showMessageDialog(null, "Please Select Counter");
 				}
 			}
 		});
 		btnIncrementTokenNumber.setFont(new Font("Tahoma", Font.BOLD, 12));
 		btnIncrementTokenNumber.setBounds(246, 52, 226, 41);
 		panel_4.add(btnIncrementTokenNumber);
-		
+
 		JButton emergencyIpdMgr = new JButton("EMG IPD Manager");
 		emergencyIpdMgr.setBounds(484, 466, 241, 42);
 		emergencyIpdMgr.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-			EmergencyIpdBrowser	ipdBrowser1 = new EmergencyIpdBrowser();
-			ipdBrowser1
-						.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-			ipdBrowser1.setLocationRelativeTo(contentPane);
-			ipdBrowser1.setVisible(true);
-			ua.check_activity(username,130,0);
+				EmergencyIpdBrowser	ipdBrowser1 = new EmergencyIpdBrowser();
+				ipdBrowser1
+				.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+				ipdBrowser1.setLocationRelativeTo(contentPane);
+				ipdBrowser1.setVisible(true);
+				ua.check_activity(username,130,0);
 			}
 		});
 		emergencyIpdMgr.setFont(new Font("Tahoma", Font.BOLD, 18));
 		contentPane.add(emergencyIpdMgr);
-		
+
 		JButton btnProcedureIpdManager = new JButton("Procedure IPD Manager");
 		btnProcedureIpdManager.setBounds(733, 466, 251, 42);
 		btnProcedureIpdManager.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-			ProcedureIpdBrowser	ipdBrowser1 = new ProcedureIpdBrowser();
-			ipdBrowser1
-						.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-			ipdBrowser1.setLocationRelativeTo(contentPane);
-			ipdBrowser1.setVisible(true);
-			ua.check_activity(username,131,0);
+				ProcedureIpdBrowser	ipdBrowser1 = new ProcedureIpdBrowser();
+				ipdBrowser1
+				.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+				ipdBrowser1.setLocationRelativeTo(contentPane);
+				ipdBrowser1.setVisible(true);
+				ua.check_activity(username,131,0);
 			}
 		});
 		btnProcedureIpdManager.setFont(new Font("Tahoma", Font.BOLD, 18));
 		contentPane.add(btnProcedureIpdManager);
-		
+
 		JButton buttonDialysisMgr = new JButton("Dialysis IPD Manager");
 		buttonDialysisMgr.setBounds(276, 520, 251, 42);
 		buttonDialysisMgr.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				DialysisIpdBrowser	ipdBrowser1 = new DialysisIpdBrowser();
 				ipdBrowser1
-							.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+				.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 				ipdBrowser1.setLocationRelativeTo(contentPane);
 				ipdBrowser1.setVisible(true);
 				ua.check_activity(username,132,0);
@@ -770,14 +771,14 @@ public class ReceptionMain<EmergencyIPD> extends JFrame {
 		});
 		buttonDialysisMgr.setFont(new Font("Tahoma", Font.BOLD, 18));
 		contentPane.add(buttonDialysisMgr);
-		
+
 		JButton buttonDialysisMgr_1 = new JButton("Machine Transactions");
 		buttonDialysisMgr_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				PaymentTransactionHistory PaymentTransactionHistory=new PaymentTransactionHistory();
 				PaymentTransactionHistory.setVisible(true);
 				PaymentTransactionHistory.setModal(true);
-				
+
 			}
 		});
 		buttonDialysisMgr_1.setBackground(new Color(173, 216, 230));
@@ -785,7 +786,7 @@ public class ReceptionMain<EmergencyIPD> extends JFrame {
 		buttonDialysisMgr_1.setFont(new Font("Dialog", Font.BOLD, 18));
 		buttonDialysisMgr_1.setBounds(539, 520, 270, 42);
 		contentPane.add(buttonDialysisMgr_1);
-		
+
 		JButton buttonDialysisMgr_2 = new JButton("Free Test Camp");
 		buttonDialysisMgr_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -797,7 +798,7 @@ public class ReceptionMain<EmergencyIPD> extends JFrame {
 		buttonDialysisMgr_2.setFont(new Font("Dialog", Font.BOLD, 18));
 		buttonDialysisMgr_2.setBounds(821, 520, 251, 42);
 		contentPane.add(buttonDialysisMgr_2);
-		
+
 		JButton btnFinancialCouncling = new JButton("Financial Councling");
 		btnFinancialCouncling.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -809,6 +810,37 @@ public class ReceptionMain<EmergencyIPD> extends JFrame {
 		btnFinancialCouncling.setFont(new Font("Dialog", Font.BOLD, 18));
 		btnFinancialCouncling.setBounds(992, 466, 251, 42);
 		contentPane.add(btnFinancialCouncling);
+
+		JButton buttonUsgBill = new JButton("USG BILL");
+		buttonUsgBill.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				JPasswordField passwordField = new JPasswordField();
+				ExamDBConnection db =new ExamDBConnection();
+				Object[] message = { "Enter Password:", passwordField };
+
+				int option = JOptionPane.showConfirmDialog(
+						null, message, "Password Required", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE
+						);
+
+				if (option == JOptionPane.OK_OPTION) {
+					String enteredPassword = new String(passwordField.getPassword());		          
+					if (db.retrieveUsgBillAccessPass().equals(enteredPassword)) {
+						FreeUsgBillGenerateDialog usg=new FreeUsgBillGenerateDialog(ReceptionMain.this);
+						usg.setModal(true);
+						usg.setVisible(true);
+					} else {
+						JOptionPane.showMessageDialog(null, "Incorrect password!", "Access Denied", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				db.closeConnection();
+
+
+			}
+		});
+		buttonUsgBill.setFont(new Font("Dialog", Font.BOLD, 18));
+		buttonUsgBill.setBounds(276, 574, 251, 42);
+		contentPane.add(buttonUsgBill);
 
 		getOperatorDetail(username);
 
@@ -835,7 +867,7 @@ public class ReceptionMain<EmergencyIPD> extends JFrame {
 		}
 		try {
 			dbConnection
-					.updateDataLastLogin(receptionIDLB.getText().toString());
+			.updateDataLastLogin(receptionIDLB.getText().toString());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -850,7 +882,7 @@ public class ReceptionMain<EmergencyIPD> extends JFrame {
 			countersID.add("0");
 			countersModel.addElement("Without Token");
 		}
-		
+
 		countersID.add("1");
 		countersModel.addElement("Counter 1");
 		countersID.add("2");
