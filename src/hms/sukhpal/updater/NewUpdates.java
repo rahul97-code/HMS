@@ -42,6 +42,7 @@ import java.util.concurrent.ExecutionException;
 import jcifs.smb.NtlmPasswordAuthentication;
 import jcifs.smb.SmbException;
 import jcifs.smb.SmbFile;
+import jcifs.smb.SmbFileInputStream;
 import jcifs.smb.SmbFileOutputStream;
 
 import javax.swing.JProgressBar;
@@ -80,7 +81,7 @@ public class NewUpdates extends JDialog {
 	public NewUpdates() {
 		setResizable(false);
 		setTitle("New Update");
-		setBounds(400, 150, 482, 461);
+		setBounds(400, 150, 482, 500);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -120,7 +121,7 @@ public class NewUpdates extends JDialog {
 
 		JPanel panel = new JPanel();
 		panel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "File List", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel.setBounds(36, 210, 220, 91);
+		panel.setBounds(36, 210, 220, 121);
 		contentPane.add(panel);
 		panel.setLayout(null);
 
@@ -162,7 +163,7 @@ public class NewUpdates extends JDialog {
 				RemainingFilesName.setText(files.get(0)+"");
 			}
 		});
-		btnNewButton.setBounds(268, 221, 169, 33);
+		btnNewButton.setBounds(268, 251, 169, 33);
 		contentPane.add(btnNewButton);
 
 		JButton btnUpdate = new JButton("Upload Update");
@@ -184,6 +185,19 @@ public class NewUpdates extends JDialog {
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
+				
+				int confirm = JOptionPane.showConfirmDialog(
+	                    null,
+	                    "Do you want to backup this file?",
+	                    "Confirm Copy",
+	                    JOptionPane.YES_NO_OPTION
+	            );
+
+	            if (confirm != JOptionPane.YES_OPTION) {
+	                JOptionPane.showMessageDialog(null, "Copy canceled by user.", "Canceled", JOptionPane.INFORMATION_MESSAGE);
+	                return ;
+	            }
+				
 				if (files.size() > 0) {
 					
 					dest = makeDirectory()+"/";
@@ -198,37 +212,37 @@ public class NewUpdates extends JDialog {
 			}
 		});
 		btnUpdate.setFont(new Font("Dialog", Font.ITALIC, 13));
-		btnUpdate.setBounds(268, 266, 169, 33);
+		btnUpdate.setBounds(268, 296, 169, 33);
 		contentPane.add(btnUpdate);
 
 		RemainingFileSizeLable = new JLabel("");
 		RemainingFileSizeLable.setFont(new Font("Dialog", Font.ITALIC, 12));
-		RemainingFileSizeLable.setBounds(302, 325, 121, 15);
+		RemainingFileSizeLable.setBounds(302, 367, 121, 15);
 		contentPane.add(RemainingFileSizeLable);
 
 		JLabel lblFileSize_1 = new JLabel("Uploaded : ");
 		lblFileSize_1.setFont(new Font("Dialog", Font.ITALIC, 12));
-		lblFileSize_1.setBounds(219, 325, 88, 15);
+		lblFileSize_1.setBounds(219, 367, 88, 15);
 		contentPane.add(lblFileSize_1);
 
 		JLabel lblFileSize = new JLabel("File Size : ");
 		lblFileSize.setFont(new Font("Dialog", Font.ITALIC, 12));
-		lblFileSize.setBounds(47, 325, 79, 15);
+		lblFileSize.setBounds(47, 367, 79, 15);
 		contentPane.add(lblFileSize);
 
 		TotalFileSizeLable = new JLabel("");
 		TotalFileSizeLable.setFont(new Font("Dialog", Font.ITALIC, 12));
-		TotalFileSizeLable.setBounds(116, 325, 104, 15);
+		TotalFileSizeLable.setBounds(116, 367, 104, 15);
 		contentPane.add(TotalFileSizeLable);
 
 		progressBar = new JProgressBar();
 		progressBar.setToolTipText("HMS is updating so please wait");
-		progressBar.setBounds(47, 362, 374, 29);
+		progressBar.setBounds(47, 406, 374, 29);
 		contentPane.add(progressBar);
 
 		JLabel label = new JLabel("");
 		label.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), "Uploading", TitledBorder.RIGHT, TitledBorder.TOP, null, new Color(51, 51, 51)));
-		label.setBounds(32, 341, 405, 61);
+		label.setBounds(32, 386, 405, 61);
 		contentPane.add(label);
 
 		JLabel label_1 = new JLabel("");
@@ -251,17 +265,17 @@ public class NewUpdates extends JDialog {
 		
 		JLabel lblFileSize_2 = new JLabel("File : ");
 		lblFileSize_2.setFont(new Font("Dialog", Font.ITALIC, 12));
-		lblFileSize_2.setBounds(46, 298, 54, 15);
+		lblFileSize_2.setBounds(46, 340, 54, 15);
 		contentPane.add(lblFileSize_2);
 		
 		RemainingFilesName = new JLabel("");
 		RemainingFilesName.setFont(new Font("Dialog", Font.ITALIC, 12));
-		RemainingFilesName.setBounds(91, 298, 176, 15);
+		RemainingFilesName.setBounds(91, 340, 176, 15);
 		contentPane.add(RemainingFilesName);
 		
 		JLabel lblDevelopedByArun = new JLabel("Developed by Arun And Rahul ...");
 		lblDevelopedByArun.setFont(new Font("Dialog", Font.ITALIC, 10));
-		lblDevelopedByArun.setBounds(21, 407, 235, 15);
+		lblDevelopedByArun.setBounds(21, 446, 235, 15);
 		contentPane.add(lblDevelopedByArun);
 		
 		JButton btnNewButton_1 = new JButton("<html>Prevous<br />Updates</html>");
@@ -292,6 +306,16 @@ public class NewUpdates extends JDialog {
 		btnNewButton_1.setFont(new Font("Dialog", Font.ITALIC, 13));
 		btnNewButton_1.setBounds(315, 137, 122, 61);
 		contentPane.add(btnNewButton_1);
+		
+		JButton btnNewButton_2 = new JButton("Backup");
+		btnNewButton_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				copySmbToSmb(mainDir + "/HMS/updates","");
+			}
+		});
+		btnNewButton_2.setFont(new Font("Dialog", Font.ITALIC, 13));
+		btnNewButton_2.setBounds(268, 209, 169, 33);
+		contentPane.add(btnNewButton_2);
 
 	}
 
@@ -439,6 +463,46 @@ public class NewUpdates extends JDialog {
 			
 		}
 	}
+	
+	 public static boolean copySmbToSmb(String sourceUrl, String destUrl) {
+	        SmbFileInputStream in = null;
+	        SmbFileOutputStream out = null;
+
+	        try {
+	            SmbFile sourceFile = new SmbFile(sourceUrl);
+	            if (!sourceFile.exists()) {
+	                System.err.println("Source file does not exist.");
+	                return false;
+	            }
+
+	            SmbFile destFile = new SmbFile(destUrl);
+
+	            in = new SmbFileInputStream(sourceFile);
+	            out = new SmbFileOutputStream(destFile);
+
+	            byte[] buffer = new byte[16 * 1024];
+	            int bytesRead;
+
+	            while ((bytesRead = in.read(buffer)) != -1) {
+	                out.write(buffer, 0, bytesRead);
+	            }
+	            JOptionPane.showMessageDialog(null, "File backup successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
+	            return true; // success
+
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            return false; // failure
+
+	        } finally {
+	            try {
+	                if (in != null) in.close();
+	            } catch (Exception ignored) {}
+
+	            try {
+	                if (out != null) out.close();
+	            } catch (Exception ignored) {}
+	        }
+	    }
 	public static String GetFileSize(long size) {
 
 		DecimalFormat df = new DecimalFormat("0.00");
