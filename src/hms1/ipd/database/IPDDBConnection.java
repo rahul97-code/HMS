@@ -241,6 +241,7 @@ public class IPDDBConnection extends DBConnection {
 	public ResultSet retrieveInsuranceBedCharge(String insurance,String ins_cat) {
 		String query="select ward,charges  from insurance_bed_detail ibd WHERE ward_type='PRIVATE ROOM WITH AC' and ins_name='"+insurance+"' and ins_category ='"+ins_cat+"'";
 		try {
+			System.out.println(query);
 			rs = statement.executeQuery(query);
 		} catch (SQLException sqle) {
 			JOptionPane.showMessageDialog(null, sqle.getMessage(), "ERROR",
