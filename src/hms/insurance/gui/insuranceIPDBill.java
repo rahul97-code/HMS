@@ -1797,24 +1797,26 @@ public class insuranceIPDBill extends JDialog {
 		Vector<String> WardV=new Vector<String>();
 		Vector<String> WardDateV=new Vector<String>();
 		Vector<Double> WardChargeV=new Vector<Double>();
-		int dayCareTime=0;
+		int dayCareTime=0,b=0;
 		try {
 			while (resultSet.next()) {
 				WardV.add(resultSet.getString(2));
 				WardDateV.add(resultSet.getString(3));
 				WardChargeV.add(resultSet.getDouble(5));
 				dayCareTime=resultSet.getInt(6);
+				b++;
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		db.closeConnection();	
+		b=b-1;
 		/** code to remove last bed**/
 		if(WardDateV.size()>1) {
-			WardV.removeElementAt(WardDateV.size()-1);
-			WardDateV.removeElementAt(WardDateV.size()-1);
-			WardChargeV.removeElementAt(WardDateV.size()-1);
+			WardV.removeElementAt(b);
+			WardDateV.removeElementAt(b);
+			WardChargeV.removeElementAt(b);
 		}
 		if(WardDateV.size()==1 && dayCareTime<=360) {
 			WardV.set(0, "DAY CARE");

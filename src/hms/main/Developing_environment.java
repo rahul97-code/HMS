@@ -7,7 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class Developing_environment {
-	public static boolean ACTIVE=false; 
+	public static boolean ACTIVE=true; 
 	public Developing_environment() 
 	{
 

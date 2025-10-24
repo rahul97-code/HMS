@@ -54,6 +54,25 @@ public class IPDDBConnection extends DBConnection {
 		}
 		return rs;
 	}
+	
+	public ResultSet getAllToDoIPDPatients(String ins) { 
+		String query = "select ipd_id, p_id, p_name, ipd_ward,ipd_entry_date, insurance_type,COALESCE((SELECT concat(SUM(is_completed),'/',COUNT(todo_id))  from ins_todo_entry ite where ite.ipd_id =ie.ipd_id),0)as tasks\r\n"
+				+ "from\r\n"
+				+ "	ipd_entery ie\r\n"
+				+ "where\r\n"
+				+ "	ie.ipd_discharged = 'no' and ie.insurance_type like '%"+ins+"'  \r\n"
+				+ "order by\r\n"
+				+ "ie.ipd_entry_date ";
+		System.out.println(query); 
+		try {
+			rs = statement.executeQuery(query);
+
+		} catch (SQLException sqle) {
+			JOptionPane.showMessageDialog(null, sqle.getMessage(), "ERROR",
+					javax.swing.JOptionPane.ERROR_MESSAGE);
+		}
+		return rs;
+	}
 	public void updateIsDraftStatus(String ipdID) throws Exception
 	{
 

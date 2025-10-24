@@ -257,6 +257,20 @@ public class InsuranceDBConnection extends DBConnection {
 		} 
 		return rs;
 	}
+	
+	public ResultSet retrieveAllTasks(String ins)
+	{
+		String query="	SELECT task_id, task_name, task_type,frequency ,date(current_date()),'Medium' as priority "
+//				+ ",description, choice_set1, choice_set2, choice_set3\r\n"
+				+ "FROM ins_todo_master where ins_type='"+ins+"'";
+		try {
+			rs = statement.executeQuery(query);
+		} catch (SQLException sqle) {
+			JOptionPane.showMessageDialog(null, sqle.getMessage(), "ERROR",
+					javax.swing.JOptionPane.ERROR_MESSAGE);
+		} 
+		return rs;
+	}
 	public ResultSet InsMrpReqdOrNot(String ins_name)
 	{
 		String query="SELECT `ins_mrp_reqd` FROM `insurance_detail` WHERE  `ins_name`='"+ins_name+"'";
