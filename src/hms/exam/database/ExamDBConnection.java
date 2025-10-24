@@ -1292,7 +1292,7 @@ public class ExamDBConnection extends DBConnection {
 				str="AND exam_rate<5000";
 		}
 
-		String query = "SELECT exam_code ,exam_desc ,exam_subcat ,exam_rate  from "+table_name+" where exam_desc like '%"+Examcat+"%' "+str+" AND `exam_text1`!='No' order by 2,3,1";
+		String query = "SELECT exam_code ,exam_desc ,exam_subcat ,exam_rate, display_code  from "+table_name+" where exam_desc like '%"+Examcat+"%' "+str+" AND `exam_text1`!='No' order by 2,3,1";
 		try {
 			rs = statement.executeQuery(query);
 

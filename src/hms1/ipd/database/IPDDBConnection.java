@@ -110,16 +110,25 @@ public class IPDDBConnection extends DBConnection {
 
 	}
 	public ResultSet retrieveAllOPDData(String patientID,String opd_date,String instype, String mode) {
-		String query = "SELECT 'C' as exp_type,'1' as exp_id,opd_doctor,opd_date,'1' as qty,opd_charge \r\n"
+		
+		try {
+			String query ="	SELECT if(id.ins_ratetype>1,concat('exam_master_',id.ins_ratetype),'exam_master') as table_name from insurance_detail id where ins_name='"+instype+"' \r\n"
+					+ "";
+			String tableName="";
+			rs = statement.executeQuery(query);
+			while(rs.next())
+				tableName=rs.getString(1);
+		
+		 query = "SELECT 'C' as exp_type,'1' as exp_id,opd_doctor,opd_date,'1' as qty,opd_charge \r\n"
 				+ "from opd_entery oe \r\n"
 				+ "where p_id='"+patientID+"' and opd_date='"+opd_date+"' and p_insurance_type = '"+instype+"' and payment_mode = '"+mode+"'\r\n"
 				+ "union all\r\n"
-				+ "select	'E' as exp_type,exam_nameid ,exam_name ,exam_date,'1' as qty,exam_charges \r\n"
+				+ "select	'E' as exp_type,(select em.display_code  from "+tableName+" em where em.exam_code =exam_nameid ) as code ,exam_name ,exam_date,'1' as qty,exam_charges \r\n"
 				+ "from	exam_entery ee\r\n"
 				+ "where	exam_performed <> 'cancel'	and exam_result5 is null and p_insurancetype = '"+instype+"' and payment_mode = '"+mode+"'\r\n"
 				+ "	and exam_pid = '"+patientID+"' and exam_date='"+opd_date+"' \r\n";
 		System.out.println(query);
-		try {
+		
 			rs = statement.executeQuery(query);
 
 		} catch (SQLException sqle) {
@@ -131,12 +140,20 @@ public class IPDDBConnection extends DBConnection {
 	}
 	
 	public ResultSet retrieveAllOPDEXAMData(String patientID,String opd_date, String instype, String mode) {
-		String query ="select 'E' as exp_type,exam_nameid ,exam_name ,exam_date,'1' as qty,exam_charges \r\n"
+		try {
+			String query ="	SELECT if(id.ins_ratetype>1,concat('exam_master_',id.ins_ratetype),'exam_master') as table_name from insurance_detail id where ins_name='"+instype+"' \r\n"
+					+ "";
+			String tableName="";
+			rs = statement.executeQuery(query);
+			while(rs.next())
+				tableName=rs.getString(1);
+		
+		 query ="select 'E' as exp_type,(select em.display_code  from "+tableName+" em where em.exam_code =exam_nameid )as code ,exam_name ,exam_date,'1' as qty,exam_charges \r\n"
 				+ "from	exam_entery ee\r\n"
 				+ "where	exam_performed <> 'cancel'	and exam_result5 is null and p_insurancetype = '"+instype+"' and payment_mode = '"+mode+"'\r\n"
 				+ "	and exam_pid = '"+patientID+"' and exam_date='"+opd_date+"' \r\n";
 		System.out.println(query);
-		try {
+		
 			rs = statement.executeQuery(query);
 
 		} catch (SQLException sqle) {

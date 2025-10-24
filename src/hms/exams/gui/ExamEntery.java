@@ -146,6 +146,7 @@ public class ExamEntery extends JDialog {
 	Vector<String> examIdVector = new Vector<String>();
 	Vector<String> examPageNumberVector = new Vector<String>();
 	Vector<String> examRoomVector = new Vector<String>();
+	Vector<String> displayCodeVector = new Vector<String>();
 	Vector<Boolean> isFreeTest = new Vector<Boolean>();
 	Vector examID = new Vector();
 	Vector lisCodes = new Vector();
@@ -272,6 +273,7 @@ public class ExamEntery extends JDialog {
 					examHashMap.clear();
 					examName.clear();
 					examlisCode.clear();
+					displayCodeVector.clear();
 					examCategory.clear();
 					iskaruna.clear();
 					isFreeUSG.clear();
@@ -344,6 +346,7 @@ public class ExamEntery extends JDialog {
 					examHashMap.clear();
 					examName.clear();
 					examlisCode.clear();
+					displayCodeVector.clear();
 					examCategory.clear();
 					iskaruna.clear();
 					isFreeUSG.clear();
@@ -422,6 +425,7 @@ public class ExamEntery extends JDialog {
 					examHashMap.clear();
 					examName.clear();
 					examlisCode.clear();
+					displayCodeVector.clear();
 					examCategory.clear();
 					iskaruna.clear();
 					isFreeUSG.clear();
@@ -682,6 +686,7 @@ public class ExamEntery extends JDialog {
 				examHashMap.remove(toDelete);
 				examName.remove(cur_selectedRow);
 				examlisCode.remove(cur_selectedRow);
+				displayCodeVector.remove(cur_selectedRow);
 				examCategory.remove(cur_selectedRow);
 				iskaruna.remove(cur_selectedRow);
 				isFreeUSG.remove(cur_selectedRow);
@@ -981,6 +986,7 @@ public class ExamEntery extends JDialog {
 					examCategory.clear();
 					iskaruna.clear();
 					examlisCode.clear();
+					displayCodeVector.clear();
 					examChargesVector.clear();
 					examIdVector.clear();
 					examPageNumberVector.clear();
@@ -1075,7 +1081,7 @@ public class ExamEntery extends JDialog {
 				new Object[][] {
 				},
 				new String[] {
-						"Exam Code", "Exam Cat", "Exams", "Price"
+						"Exam Code", "Exam Cat", "Exams", "Price","Display Code"
 				}
 				) {@Override
 			public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -1086,6 +1092,8 @@ public class ExamEntery extends JDialog {
 		table.getColumnModel().getColumn(2).setPreferredWidth(180);
 		table.getColumnModel().getColumn(3).setPreferredWidth(45);
 		table.addMouseListener(new MouseAdapter() {
+			private String display_code;
+
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if(e.getClickCount()==2) {
@@ -1121,6 +1129,7 @@ public class ExamEntery extends JDialog {
 					exam_nameid = table.getValueAt(row, 0).toString();
 					exam_name = table.getValueAt(row, 1).toString();
 					examsub_catname = table.getValueAt(row, 2).toString();
+					display_code = table.getValueAt(row, 4).toString();
 
 					getPrice("" + exam_nameid);
 					if (is_free_test) {
@@ -1197,6 +1206,7 @@ public class ExamEntery extends JDialog {
 					itemsHashMap.put(exam_name + " " + examsub_catname,
 							exam_charge);
 					examHashMap.put(exam_nameid, exam_room);
+					displayCodeVector.add(display_code);
 					loadDataToTable();
 
 				}
@@ -1591,7 +1601,7 @@ public class ExamEntery extends JDialog {
 		ObjectArray_examroom = new Object[size];
 		ObjectArray_examcharges = new Object[size];
 		ObjectArray_examcategories = new Object[size];
-		ObjectArray_ListOfexams = new Object[size][4];
+		ObjectArray_ListOfexams = new Object[size][5];
 
 		for (int i = 0; i < examName.size(); i++) {
 			ObjectArray_examcharges[i] = examChargesVector.get(i);
@@ -1603,12 +1613,13 @@ public class ExamEntery extends JDialog {
 			ObjectArray_examcategories[i] = examCategory.get(i);
 			ObjectArray_ListOfexams[i][2] =  examChargesVector.get(i);
 			ObjectArray_ListOfexams[i][3] = examlisCode.get(i);
+			ObjectArray_ListOfexams[i][4] = displayCodeVector.get(i);
 			totalCharges = totalCharges
 					+ Double.parseDouble(ObjectArray_examcharges[i].toString()
 							.trim());
 		}
 		addTestTable_1.setModel(new DefaultTableModel(ObjectArray_ListOfexams,
-				new String[] { "Exam Code","Exams", "Charges","LIS Code" }) {
+				new String[] { "Exam Code","Exams", "Charges","LIS Code", "Display Code" }) {
 
 			boolean[] canEdit = new boolean[] { false, false, false };
 
@@ -1648,7 +1659,7 @@ public class ExamEntery extends JDialog {
 			table.setModel(new DefaultTableModel(
 					Rows_Object_Array,
 					new String[] {
-							"Exam Code", "Exam Cat", "Exams", "Price"
+							"Exam Code", "Exam Cat", "Exams", "Price","Display Code"
 					}
 					) {@Override
 				public boolean isCellEditable(int rowIndex, int columnIndex) {
