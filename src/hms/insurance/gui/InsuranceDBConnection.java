@@ -112,6 +112,53 @@ public class InsuranceDBConnection extends DBConnection {
 		}
 		return rs;
 	}
+	public ResultSet RetrieveTaskMasterDATA() { 
+		String query ="  SELECT task_id, task_name, description, task_type, ins_type, frequency, choice_set1, choice_set2, choice_set3, created_at, updated_at\r\n"
+				+ "FROM ins_todo_master;";
+		try {
+			System.out.println(query);
+			rs = statement.executeQuery(query);
+
+
+		} catch (SQLException sqle) {
+			JOptionPane.showMessageDialog(null, sqle.getMessage(), "ERROR",
+					javax.swing.JOptionPane.ERROR_MESSAGE);
+		}
+		return rs;
+	}
+	
+	public ResultSet getAllFreqType() { 
+		String query ="SELECT REPLACE(REPLACE(REPLACE(COLUMN_TYPE, 'enum(', ''), ')', ''), '''', '') AS enum_values\r\n"
+				+ "FROM INFORMATION_SCHEMA.COLUMNS\r\n"
+				+ "WHERE TABLE_NAME = 'ins_todo_master'\r\n"
+				+ "  AND COLUMN_NAME = 'frequency'\r\n"
+				+ "  AND TABLE_SCHEMA = 'hospital_db';";
+		try {
+			System.out.println(query);
+			rs = statement.executeQuery(query);
+
+
+		} catch (SQLException sqle) {
+			JOptionPane.showMessageDialog(null, sqle.getMessage(), "ERROR",
+					javax.swing.JOptionPane.ERROR_MESSAGE);
+		}
+		return rs;
+	}
+
+	public ResultSet getTaskType() { 
+		String query ="SELECT  DISTINCT task_type from ins_todo_master itm \r\n"
+				+ "";
+		try {
+			System.out.println(query);
+			rs = statement.executeQuery(query);
+
+
+		} catch (SQLException sqle) {
+			JOptionPane.showMessageDialog(null, sqle.getMessage(), "ERROR",
+					javax.swing.JOptionPane.ERROR_MESSAGE);
+		}
+		return rs;
+	}
 
 	public ResultSet retrievestatus(String id) { 
 		String query = "SELECT `ipd_text5` FROM ipd_entery where ipd_id2="+id+"";
@@ -364,6 +411,14 @@ public class InsuranceDBConnection extends DBConnection {
 		preparedStatement.setString(1, rowID);
 		preparedStatement.executeUpdate();
 	}
+	public void deleteTaskRow(String rowID) throws Exception
+	{
+		PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM ins_todo_master\r\n"
+				+ "WHERE task_id = ?;\r\n"
+				+ "");
+		preparedStatement.setString(1, rowID);
+		preparedStatement.executeUpdate();
+	}
 	public ResultSet checkinstype(int itemid) {
 
 		String query = "\r\n"
@@ -419,7 +474,27 @@ public class InsuranceDBConnection extends DBConnection {
 		}
 		return rs;
 	}
-	
+	public int saveTaskToDB(String[] data) throws SQLException {
+	        String insertSQL = "INSERT INTO ins_todo_entry " +
+	                     "(ipd_id, p_id, p_name, ins_type, ins_category, due_date, priority, " +
+	                     "ins_registration_no, task_id, task_name, task_type, upload_path, " +
+	                     "created_by, created_by_id, is_completed) " +
+	                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			PreparedStatement preparedStatement = connection.prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS);
+
+	        for (int i = 0; i < data.length; i++) {
+	        	preparedStatement.setString(i + 1, data[i]);
+	        }
+
+			preparedStatement.executeUpdate();
+			ResultSet rs = preparedStatement.getGeneratedKeys();
+			rs.next();
+			return  rs.getInt(1);
+	}
+	public void updateTodoPath(String path,String todo_id) throws SQLException {
+		statement.execute("update ins_todo_entry set upload_path='"+path+"' where todo_id='"+todo_id+"'");
+	}
+
 	public ResultSet copyInsTable(int newRateType,int copyRateType) {
 		String table="exam_master";
 		String new_table="exam_master",old_table = "exam_master";
@@ -437,6 +512,27 @@ public class InsuranceDBConnection extends DBConnection {
 		}
 		return rs;
 	}
+	public int insertTodo(String[] data) throws Exception {
+	    String insertSQL = "REPLACE INTO `ins_todo_master` " +
+	            "(task_id, task_name, description, task_type, ins_type, ins_id, frequency, created_by, created_by_id, " +
+	            "choice_set1, choice_set2, choice_set3, created_at, updated_at) " +
+	            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
+
+	    PreparedStatement preparedStatement = connection.prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS);
+
+	    // Set all parameters as strings
+	    for (int i = 1; i <= 12; i++) {
+	        preparedStatement.setString(i, data[i - 1]);
+	    }
+
+	    preparedStatement.executeUpdate();
+
+	    ResultSet rs = preparedStatement.getGeneratedKeys();
+	    rs.next();
+
+	    return rs.getInt(1);
+	}
+
 	public int inserData(String[] data) throws Exception
 	{
 		String insertSQL = "INSERT INTO `insurance_detail`( `ins_name`, `ins_detail`, `ins_ratepercentage`, `ins_ratetype`) VALUES (?,?,?,?)";

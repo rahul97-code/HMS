@@ -573,6 +573,8 @@ public void UpdateData(String[] data) throws Exception {
 				+ "WHEN IA.`change` = 'U'\r\n"
 				+ "AND IA.new_item_id IS NOT NULL\r\n"
 				+ "AND IA.new_item_id <> '' THEN IA.new_item_id\r\n"
+				+ "WHEN EM.display_code IS NOT NULL\r\n"
+				+ "AND EM.display_code <> '' THEN EM.display_code\r\n"
 				+ "ELSE IE.charges_id\r\n"
 				+ "END AS item_id ,\r\n"
 				+ "COALESCE(IA.`change`,\r\n"

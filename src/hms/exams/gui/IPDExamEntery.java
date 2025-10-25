@@ -155,6 +155,7 @@ public class IPDExamEntery extends JDialog {
 	Vector<String> examIdVector = new Vector<String>();
 	Vector<String> examPageNumberVector = new Vector<String>();
 	Vector<String> examRoomVector = new Vector<String>();
+	Vector<String> displayCodeVector = new Vector<String>();
 	Vector<String> TodayExistExams = new Vector<String>();
 	Vector examID = new Vector();
 	Vector lisCodes = new Vector();
@@ -283,10 +284,10 @@ public class IPDExamEntery extends JDialog {
 					examHashMap.clear();
 					examName.clear();
 					examlisCode.clear();
+					displayCodeVector.clear();
 					examCategory.clear();
 					examChargesVector.clear();
 					examIdVector.clear();
-
 					examPageNumberVector.clear();
 					examRoomVector.clear();
 					loadDataToTable();
@@ -355,6 +356,7 @@ public class IPDExamEntery extends JDialog {
 					examHashMap.clear();
 					examName.clear();
 					examlisCode.clear();
+					displayCodeVector.clear();
 					examCategory.clear();
 					examChargesVector.clear();
 					examIdVector.clear();
@@ -453,6 +455,7 @@ public class IPDExamEntery extends JDialog {
 					examHashMap.clear();
 					examName.clear();
 					examlisCode.clear();
+					displayCodeVector.clear();
 					examCategory.clear();
 					examChargesVector.clear();
 					examIdVector.clear();
@@ -491,6 +494,7 @@ public class IPDExamEntery extends JDialog {
 					examHashMap.clear();
 					examName.clear();
 					examlisCode.clear();
+					displayCodeVector.clear();
 					examCategory.clear();
 					examChargesVector.clear();
 					examIdVector.clear();
@@ -637,6 +641,7 @@ public class IPDExamEntery extends JDialog {
 				examHashMap.remove(toDelete);
 				examName.remove(cur_selectedRow);
 				examlisCode.remove(cur_selectedRow);
+				displayCodeVector.remove(cur_selectedRow);
 				examCategory.remove(cur_selectedRow);
 				examChargesVector.remove(cur_selectedRow);
 				examIdVector.remove(cur_selectedRow);
@@ -1026,11 +1031,13 @@ public class IPDExamEntery extends JDialog {
 		addTestTable_2 = new JTable();
 		addTestTable_2.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		addTestTable_2.setModel(new DefaultTableModel(new Object[][] {},
-				new String[] { "Exam Code", "Exam Cat", "Exams", "Price" }){@Override
+				new String[] { "Exam Code", "Exam Cat", "Exams", "Price","Display Code" }){@Override
 			public boolean isCellEditable(int rowIndex, int columnIndex) {
 					return false;
 				}});
 		addTestTable_2.addMouseListener(new MouseAdapter() {
+			private String display_code;
+
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if(e.getClickCount()==2) {
@@ -1090,6 +1097,7 @@ public class IPDExamEntery extends JDialog {
 
 					exam_name = addTestTable_2.getValueAt(row, 1).toString();
 					examsub_catname = addTestTable_2.getValueAt(row, 2).toString();
+					display_code = addTestTable_2.getValueAt(row, 4).toString();
 
 				
 					examCategory.add(exam_name);
@@ -1102,6 +1110,7 @@ public class IPDExamEntery extends JDialog {
 					itemsHashMap.put(exam_name + " " + examsub_catname,
 							exam_charge);
 					examHashMap.put(exam_nameid, exam_room);
+					displayCodeVector.add(display_code);
 					loadDataToTable();
 
 				}
@@ -1413,7 +1422,7 @@ public class IPDExamEntery extends JDialog {
 			addTestTable_2.setModel(new DefaultTableModel(
 					Rows_Object_Array,
 					new String[] {
-							"Exam Code", "Exam Cat", "Exams", "Price"
+							"Exam Code", "Exam Cat", "Exams", "Price", "Display Code"
 					}
 					) {@Override
 				public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -1512,7 +1521,7 @@ public class IPDExamEntery extends JDialog {
 		ObjectArray_examroom = new Object[size];
 		ObjectArray_examcharges = new Object[size];
 		ObjectArray_examcategories = new Object[size];
-		ObjectArray_ListOfexams = new Object[size][4];
+		ObjectArray_ListOfexams = new Object[size][5];
 
 		for (int i = 0; i < examName.size(); i++) {
 			ObjectArray_examcharges[i] = examChargesVector.get(i);
@@ -1524,12 +1533,13 @@ public class IPDExamEntery extends JDialog {
 			ObjectArray_examcategories[i] = examCategory.get(i);
 			ObjectArray_ListOfexams[i][2] =  examChargesVector.get(i);
 			ObjectArray_ListOfexams[i][3] = examlisCode.get(i);
+			ObjectArray_ListOfexams[i][4] = displayCodeVector.get(i);
 			totalCharges = totalCharges
 					+ Double.parseDouble(ObjectArray_examcharges[i].toString()
 							.trim());
 		}
 		addTestTable_1.setModel(new DefaultTableModel(ObjectArray_ListOfexams,
-				new String[] { "Exam Code","Exams", "Charges","LIS Code" }) {
+				new String[] { "Exam Code","Exams", "Charges","LIS Code","Display Code" }) {
 
 			boolean[] canEdit = new boolean[] { false, false, false };
 

@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
@@ -96,7 +97,7 @@ public class InsuranceTodoBrowser extends JDialog {
 		setTitle("Insurance Todo Patient");
 		setResizable(false);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(InsuranceTodoBrowser.class.getResource("/icons/rotaryLogo.png")));
-		setBounds(100, 100, 1070, 593);
+		setBounds(100, 100, 929, 476);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel
 				.setBorder(new TitledBorder(null, "Insurance Todo Patient", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -104,7 +105,7 @@ public class InsuranceTodoBrowser extends JDialog {
 		contentPanel.setLayout(null);
 		{
 			JScrollPane scrollPane = new JScrollPane();
-			scrollPane.setBounds(20, 111, 1035, 383);
+			scrollPane.setBounds(20, 78, 885, 324);
 			contentPanel.add(scrollPane);
 			{
 				table = new JTable();
@@ -185,22 +186,12 @@ public class InsuranceTodoBrowser extends JDialog {
 			}
 		});
 		btnCancel.setFont(new Font("Tahoma", Font.BOLD, 14));
-		btnCancel.setBounds(900, 506, 155, 44);
+		btnCancel.setBounds(750, 408, 155, 32);
 		contentPanel.add(btnCancel);
-
-		JButton btnRefresh = new JButton("Refresh");
-		btnRefresh.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-
-			}
-		});
-		btnRefresh.setFont(new Font("Tahoma", Font.BOLD, 14));
-		btnRefresh.setBounds(582, 505, 155, 44);
-		contentPanel.add(btnRefresh);
 
 		searchItemTF = new JTextField();
 		searchItemTF.setColumns(10);
-		searchItemTF.setBounds(169, 22, 189, 24);
+		searchItemTF.setBounds(465, 31, 189, 24);
 		contentPanel.add(searchItemTF);
 		searchItemTF.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
@@ -223,7 +214,7 @@ public class InsuranceTodoBrowser extends JDialog {
 		});
 
 		JLabel label = new JLabel("Search");
-		label.setBounds(76, 22, 85, 20);
+		label.setBounds(372, 31, 85, 20);
 		contentPanel.add(label);
 
 		btnExcel = new JButton("Excel");
@@ -240,7 +231,7 @@ public class InsuranceTodoBrowser extends JDialog {
 			}
 		});
 		btnExcel.setFont(new Font("Tahoma", Font.BOLD, 14));
-		btnExcel.setBounds(742, 505, 155, 44);
+		btnExcel.setBounds(592, 407, 155, 33);
 		contentPanel.add(btnExcel);
 
 
@@ -251,16 +242,16 @@ public class InsuranceTodoBrowser extends JDialog {
 				populateExpensesTable(ins);
 			}
 		});
-		insCB.setBounds(184, 64, 161, 24);
+		insCB.setBounds(184, 31, 161, 24);
 		contentPanel.add(insCB);
 
 		JLabel lblReplaceWith = new JLabel("Insurance");
-		lblReplaceWith.setBounds(86, 69, 107, 15);
+		lblReplaceWith.setBounds(86, 36, 107, 15);
 		contentPanel.add(lblReplaceWith);
 
 		JLabel label_1 = new JLabel("");
 		label_1.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		label_1.setBounds(59, 55, 299, 44);
+		label_1.setBounds(59, 22, 602, 44);
 		contentPanel.add(label_1);
 
 		getDoctorDetails();
@@ -365,7 +356,7 @@ public class InsuranceTodoBrowser extends JDialog {
 			while (rs.next()) {
 
 				for (int C = 1; C <= NumberOfColumns; C++) {
-					Rows_Object_Array[R][C - 1] = rs.getObject(C);
+					Rows_Object_Array[R][C - 1] = rs.getString(C);
 				}
 				R++;
 			}
@@ -396,7 +387,7 @@ public class InsuranceTodoBrowser extends JDialog {
 			// table.getColumnModel().getColumn(9).setPreferredWidth(100);
 			// table.getColumnModel().getColumn(9).setMinWidth(100);
 			table.setFont(new Font("Tahoma", Font.BOLD, 12));
-			table.getColumnModel().getColumn(5).setCellRenderer(new CustomRenderer());
+//			table.getColumnModel().getColumn(5).setCellRenderer(new CustomRenderer());
 		} catch (SQLException ex) {
 
 		}

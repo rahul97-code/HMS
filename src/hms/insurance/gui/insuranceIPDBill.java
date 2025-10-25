@@ -221,7 +221,7 @@ public class insuranceIPDBill extends JDialog {
 	private String DischargeType;
 	private JLabel lblCashPatient;
 	public static void main(String[] arg) {
-		new insuranceIPDBill("84393").setVisible(true);
+		new insuranceIPDBill("85043").setVisible(true);
 	}
 
 	@SuppressWarnings("unchecked")
